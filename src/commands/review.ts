@@ -159,12 +159,12 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     )
     .setFooter({ 
       text: `${guild.customEmbed?.footer?.text || DEFAULT_FOOTER} • ID: ${reviewId}`,
-      iconURL: interaction.client.user?.displayAvatarURL() ?? undefined
+      iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined
     });
 
   // Add thumbnail if available
   if (currentGuild.iconURL()) {
-    embed.setThumbnail(currentGuild.iconURL() || null);
+    embed.setThumbnail(currentGuild.iconURL() ?? undefined);
   }
 
   // Send to configured review channel
