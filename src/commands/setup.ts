@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, type ColorResolvable } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, type ColorResolvable, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { guildModel } from '../models/guild';
-import { DEFAULT_EMBED_COLOR, DEFAULT_FOOTER, ERRORS } from '../constants';
+import { DEFAULT_EMBED_COLOR, DEFAULT_FOOTER, ERRORS, BOT_NAME } from '../constants';
 import { logReview } from '../events/reviewLog';
 
 export const data = new SlashCommandBuilder()
@@ -157,6 +157,33 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         .map(key => `- ${key}: ${updateData[key]}`)
         .join('\n')}`
     );
+  }
+
+  if (guild.channel) {
+    const channel = await currentGuild.channels.fetch(guild.channel);
+    if (channel?.isTextBased()) {
+      const welcomeEmbed = new EmbedBuilder()
+        .setColor((guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
+        .setDescription('To submit a Review, click the \'Submit Review\' button below.\n\nProvide a rating (1-5) and share your experience with the server.')
+        .setAuthor({
+          name: BOT_NAME,
+          iconURL: interaction.client.user?.displayAvatarURL() ?? undefined
+        })
+        .setThumbnail(interaction.client.user?.displayAvatarURL() ?? undefined)
+
+      const row = new ActionRowBuilder<ButtonBuilder>()
+        .addComponents(
+          new ButtonBuilder()
+            .setCustomId('submit_review')
+            .setLabel('Submit Review')
+            .setStyle(ButtonStyle.Success)
+        );
+
+      await channel.send({
+        embeds: [welcomeEmbed],
+        components: [row]
+      });
+    }
   }
 
   return interaction.reply({ embeds: [embed], ephemeral: true });

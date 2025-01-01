@@ -66,7 +66,6 @@ export const data = new SlashCommandBuilder()
 
 // Command execution
 export async function execute(interaction: ChatInputCommandInteraction) {
-  // Get command options
   const stars = interaction.options.getInteger('stars', true);
   const reviewContent = interaction.options.getString('message', true);
   
