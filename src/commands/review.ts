@@ -158,8 +158,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       }
     )
     .setFooter({ 
-      text: guild.customEmbed?.footer?.text || `${DEFAULT_FOOTER} • ID: ${reviewId}`,
-      iconURL: currentGuild.iconURL() || null
+      text: `${guild.customEmbed?.footer?.text || DEFAULT_FOOTER} • ID: ${reviewId}`,
+      iconURL: interaction.client.user?.displayAvatarURL() ?? undefined
     });
 
   // Add thumbnail if available

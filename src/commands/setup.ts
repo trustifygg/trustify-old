@@ -23,6 +23,10 @@ export const data = new SlashCommandBuilder()
     option.setName('useful_button')
       .setDescription('Show useful button on reviews')
       .setRequired(true))
+  .addRoleOption(option =>
+    option.setName('admin_role')
+      .setDescription('Role that can manage reviews')
+      .setRequired(true))
   .addStringOption(option =>
     option.setName('review_title')
       .setDescription('Custom title for reviews (e.g., "New Review", "Feedback")')

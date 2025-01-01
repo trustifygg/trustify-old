@@ -32,7 +32,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     const command = require(path.join(commandsPath, file));
     if ('data' in command) {
       const permissions = command.data.default_member_permissions;
-      const isAdminCommand = permissions === PermissionFlagsBits.Administrator.toString();
+      const isAdminCommand = permissions === PermissionFlagsBits.Administrator.toString() || 
+                            command.data.name === 'deletereview';
       
       const commandInfo = `\`/${command.data.name}\` - ${command.data.description}`;
       

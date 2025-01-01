@@ -22,6 +22,7 @@ export interface IGuild extends mongoose.Document {
 		footer: { text: string };
 	};
 	blacklistedRoles: string[];
+	adminRoles: string[];
 }
 
 const guildSchema = new mongoose.Schema({
@@ -62,6 +63,10 @@ const guildSchema = new mongoose.Schema({
 		},
 	},
 	blacklistedRoles: {
+		type: [String],
+		default: [],
+	},
+	adminRoles: {
 		type: [String],
 		default: [],
 	},
