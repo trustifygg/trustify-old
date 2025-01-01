@@ -141,7 +141,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     .setColor((guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
     .setAuthor({
       name: `Review from ${guild.forceAnonymousReviews ? 'Anonymous' : interaction.user.username}`,
-      iconURL: guild.forceAnonymousReviews ? currentGuild.iconURL() || null : interaction.user.displayAvatarURL({ size: 128, forceStatic: false })
+      iconURL: guild.forceAnonymousReviews ? currentGuild.iconURL() ?? undefined : interaction.user.displayAvatarURL({ size: 128, forceStatic: false })
     })
     .setTitle(guild.reviewTitle || DEFAULT_REVIEW_TITLE)
     .setDescription(reviewContent)
