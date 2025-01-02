@@ -45,7 +45,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
   }
 
-  // Delete the review message if it exists
   if (review.messageId && guild.channel) {
     try {
       const channel = await currentGuild.channels.fetch(guild.channel);
@@ -58,7 +57,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     }
   }
 
-  // Delete the review thread if it exists
   if (review.threadId) {
     try {
       const thread = await currentGuild.channels.fetch(review.threadId);

@@ -9,7 +9,6 @@ import {
 } from 'discord.js';
 import { reviewModel } from '../models/review';
 
-// Create review modal
 export function createReviewModal() {
   const modal = new ModalBuilder()
     .setCustomId('review_modal')
@@ -40,7 +39,6 @@ export function createReviewModal() {
   return modal;
 }
 
-// Handle useful button click
 export async function handleUsefulButton(interaction: ButtonInteraction) {
   const reviewId = interaction.customId.split('_')[1];
   const review = await reviewModel.findOne({ reviewId });
@@ -65,7 +63,6 @@ export async function handleUsefulButton(interaction: ButtonInteraction) {
 
   await review.save();
 
-  // Create row with both buttons
   const row = new ActionRowBuilder<ButtonBuilder>()
     .addComponents(
       new ButtonBuilder()

@@ -1,5 +1,5 @@
 // Colors
-export const DEFAULT_EMBED_COLOR = 0x5865F2; // Discord Blurple color code
+export const DEFAULT_EMBED_COLOR = 0x5865F2;
 
 // Emojis
 export const STAR_EMPTY = '<:starempty:1324131747851665489>';

@@ -7,10 +7,7 @@ import { setClient } from './events/reviewLog';
 import { createReviewModal, handleUsefulButton } from './components/reviewButtons';
 import { requireSetup } from './utils/checkSetup';
 
-// Load environment variables
 config();
-
-// Connect to MongoDB
 connectToDatabase();
 
 interface ExtendedClient extends Client {
@@ -75,7 +72,6 @@ client.on('interactionCreate', async interaction => {
   
   // Handle button clicks
   else if (interaction.isButton()) {
-    // Don't allow button interactions until setup
     if (interaction.customId !== 'submit_review' && !(await requireSetup(interaction as any))) return;
     
     if (interaction.customId === 'submit_review') {
@@ -99,7 +95,6 @@ client.on('interactionCreate', async interaction => {
       });
     }
 
-    // Create a modified interaction object that properly extends ChatInputCommandInteraction
     const modifiedInteraction = {
       ...interaction,
       commandName: 'review',
@@ -128,7 +123,6 @@ client.on('interactionCreate', async interaction => {
       isChatInputCommand: () => true
     } as ChatInputCommandInteraction;
 
-    // Execute review command
     const command = client.commands.get('review');
     if (command) {
       try {
@@ -147,6 +141,4 @@ client.on('interactionCreate', async interaction => {
 });
 
 setClient(client);
-
-// Login to Discord
 client.login(process.env.DISCORD_TOKEN); 

@@ -42,7 +42,6 @@ function getStarsDisplay(count: number): string {
   return starEmoji.repeat(count) + STAR_EMPTY.repeat(MAX_STARS - count);
 }
 
-// Command definition
 export const data = new SlashCommandBuilder()
   .setName('review')
   .setDescription('Review this server')
@@ -69,7 +68,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const stars = interaction.options.getInteger('stars', true);
   const reviewContent = interaction.options.getString('message', true);
   
-  // Validate guild context
   const currentGuild = interaction.guild;
   if (!currentGuild) {
     return interaction.reply({ 
@@ -78,7 +76,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
   }
 
-  // Get guild settings
   const guild = await guildModel.findOne({ guildId: currentGuild.id });
   if (!guild) {
     return interaction.reply({ 
@@ -87,7 +84,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
   }
 
-  // Add channel check
   if (!guild.channel) {
     return interaction.reply({ 
       content: ERRORS.NO_REVIEW_CHANNEL, 
@@ -95,10 +91,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
   }
 
-  // Check if user has permission to review
   const member = await currentGuild.members.fetch(interaction.user.id);
   
-  // Check if user is blacklisted
   if (guild.blacklistedRoles.some(roleId => member.roles.cache.has(roleId))) {
     return interaction.reply({
       content: 'You are not allowed to submit reviews.',
@@ -106,7 +100,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
   }
 
-  // Check if user has required role (if any are set)
   if (guild.reviewRoles.length > 0 && !guild.reviewRoles.some(roleId => member.roles.cache.has(roleId))) {
     return interaction.reply({
       content: 'You need one of the required roles to submit reviews.',
@@ -114,13 +107,11 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
   }
 
-  // Generate review data
   const reviewId = generateReviewId();
   const currentDate = new Date();
   const totalReviews = await reviewModel.countDocuments({ guildId: currentGuild.id });
   const reviewNumber = totalReviews + 1;
 
-  // Create review
   const review = new reviewModel({
     guildId: currentGuild.id,
     reviewId,
@@ -166,7 +157,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     embed.setThumbnail(currentGuild.iconURL() ?? null);
   }
 
-  // Send to configured review channel
   const channel = await currentGuild.channels.fetch(guild.channel);
   if (!channel?.isTextBased()) {
     return interaction.reply({ 
@@ -175,7 +165,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
   }
 
-  // Add buttons if enabled
   const components = [];
   if (guild.usefulButton || guild.reviewButton) {
     const row = new ActionRowBuilder<ButtonBuilder>();
@@ -207,7 +196,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     components: components.length > 0 ? components : undefined
   });
 
-  // Handle thread creation if enabled
   if (guild.createThreads && reviewMessage.id) {
     const createdThread = await reviewMessage.startThread({
       name: `Review Discussion #${reviewNumber}`,
@@ -218,7 +206,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     review.messageId = reviewMessage.id;
     await review.save();
 
-    // Log with thread info
     await logReview(
       currentGuild.id,
       `📝 **New Review**
@@ -231,7 +218,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       ${reviewContent}`
     );
   } else {
-    // Log without thread info
     await logReview(
       currentGuild.id,
       `📝 **New Review**
@@ -262,7 +248,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     console.error('Failed to send DM:', error);
   }
 
-  // Send confirmation to user
   return interaction.reply({ 
     content: `Review posted in ${channel}!`, 
     ephemeral: true 
