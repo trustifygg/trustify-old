@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, type ColorResolvable, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
-import { guildModel } from '../models/guild';
 import { 
   DEFAULT_EMBED_COLOR, 
   DEFAULT_FOOTER, 
@@ -18,8 +17,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   if (!currentGuild) {
     return interaction.reply({ content: ERRORS.GUILD_ONLY, ephemeral: true });
   }
-
-  const guild = await guildModel.findOne({ guildId: currentGuild.id });
   
   // Load all commands
   const commandsPath = path.join(__dirname);
@@ -33,7 +30,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     if ('data' in command) {
       const permissions = command.data.default_member_permissions;
       const isAdminCommand = permissions === PermissionFlagsBits.Administrator.toString() || 
-                            command.data.name === 'deletereview';
+                            ['deletereview', 'reviewbutton'].includes(command.data.name);
       
       const commandInfo = `\`/${command.data.name}\` - ${command.data.description}`;
       
@@ -46,7 +43,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   }
 
   const embed = new EmbedBuilder()
-    .setColor((guild?.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
+    .setColor(DEFAULT_EMBED_COLOR)
     .setAuthor({
       name: `${BOT_NAME}'s Help Menu`,
       iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined

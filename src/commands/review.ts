@@ -162,7 +162,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined
     });
 
-  // Add thumbnail if available
   if (currentGuild.iconURL()) {
     embed.setThumbnail(currentGuild.iconURL() ?? null);
   }

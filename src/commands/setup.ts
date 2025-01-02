@@ -27,6 +27,10 @@ export const data = new SlashCommandBuilder()
     option.setName('admin_role')
       .setDescription('Role that can manage reviews')
       .setRequired(true))
+      .addBooleanOption(option =>
+    option.setName('create_threads')
+      .setDescription('Create discussion threads for reviews')
+      .setRequired(false))
   .addStringOption(option =>
     option.setName('review_title')
       .setDescription('Custom title for reviews (e.g., "New Review", "Feedback")')
@@ -34,10 +38,6 @@ export const data = new SlashCommandBuilder()
   .addBooleanOption(option =>
     option.setName('force_anonymous')
       .setDescription('Force all reviews to be anonymous')
-      .setRequired(false))
-  .addBooleanOption(option =>
-    option.setName('create_threads')
-      .setDescription('Create discussion threads for reviews')
       .setRequired(false))
   .addStringOption(option =>
     option.setName('embed_color')
@@ -77,8 +77,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const reviewTitle = interaction.options.getString('review_title');
   const reviewChannel = interaction.options.getChannel('review_channel', true);
   const logsChannel = interaction.options.getChannel('logs_channel', true);
-  const forceAnonymous = interaction.options.getBoolean('force_anonymous');
-  const createThreads = interaction.options.getBoolean('create_threads');
+  const forceAnonymous = interaction.options.getBoolean('force_anonymous', false);
+  const createThreads = interaction.options.getBoolean('create_threads', false);
   const reviewButton = interaction.options.getBoolean('review_button', true);
   const usefulButton = interaction.options.getBoolean('useful_button', true);
   const embedColor = interaction.options.getString('embed_color');
@@ -92,15 +92,19 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     channel: reviewChannel.id,
     logsChannel: logsChannel.id,
     reviewButton: reviewButton,
-    usefulButton: usefulButton
+    usefulButton: usefulButton,
+    customEmbed: {
+      color: embedColor || '#5865F2',
+      footer: {
+        text: footerText || DEFAULT_FOOTER
+      }
+    }
   };
 
   // Update data if options are provided
   if (reviewTitle) updateData.reviewTitle = reviewTitle;
   if (forceAnonymous !== null) updateData.forceAnonymousReviews = forceAnonymous;
   if (createThreads !== null) updateData.createThreads = createThreads;
-  if (embedColor) updateData['customEmbed.color'] = embedColor;
-  if (footerText) updateData['customEmbed.footer.text'] = footerText;
   if (blacklistRole) {
     const currentBlacklist = guild?.blacklistedRoles || [];
     if (!currentBlacklist.includes(blacklistRole.id)) {
@@ -130,7 +134,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   }
 
   const embed = new EmbedBuilder()
-    .setColor((guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
+    .setColor(embedColor ? parseInt(embedColor.replace('#', ''), 16) : DEFAULT_EMBED_COLOR)
     .setTitle('Server Review Settings Updated')
     .addFields(
       {
@@ -184,7 +188,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     const channel = await currentGuild.channels.fetch(guild.channel);
     if (channel?.isTextBased()) {
       const welcomeEmbed = new EmbedBuilder()
-        .setColor((guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
+        .setColor(embedColor ? parseInt(embedColor.replace('#', ''), 16) : DEFAULT_EMBED_COLOR)
         .setDescription('To submit a Review, click the \'Submit Review\' button below.\n\nProvide a rating (1-5) and share your experience with the server.')
         .setAuthor({
           name: BOT_NAME,

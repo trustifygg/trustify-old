@@ -1,5 +1,5 @@
 {
-  "name": "trustify-new",
+  "name": "reviews-bot",
   "module": "index.ts",
   "type": "module",
   "scripts": {

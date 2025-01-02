@@ -1,5 +1,5 @@
 // Colors
-export const DEFAULT_EMBED_COLOR = '#058c42' as const;
+export const DEFAULT_EMBED_COLOR = 0x5865F2; // Discord Blurple color code
 
 // Emojis
 export const STAR_EMPTY = '<:starempty:1324131747851665489>';
@@ -13,7 +13,7 @@ export const MAX_STARS = 5;
 export const MAX_REVIEW_ROLES = 5;
 
 // Text constants
-export const BOT_NAME = 'Trustify';
+export const BOT_NAME = 'Reviews';
 export const BOT_VERSION = '2.0.0';
 export const BOT_TAGLINE = 'Simplifying reviews';
 export const DEFAULT_REVIEW_TITLE = 'New Review';

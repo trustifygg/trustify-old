@@ -21,10 +21,10 @@ function getStarsDisplay(count: number): string {
 }
 
 function getProgressBar(percentage: number): string {
-  const barWidth = 10; // Fixed width
+  const barWidth = 10;
   const filled = Math.round(percentage * barWidth / 100);
   const empty = barWidth - filled;
-  return `\`${'█'.repeat(filled)}${'░'.repeat(empty)}\``; // Wrap in backticks for monospace
+  return `\`${'█'.repeat(filled)}${'░'.repeat(empty)}\``;
 }
 
 export async function execute(interaction: ChatInputCommandInteraction) {
@@ -58,7 +58,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const reviewer = await interaction.client.users.fetch(latestReview.authorId);
 
   const embed = new EmbedBuilder()
-    .setColor((guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
+    .setColor(DEFAULT_EMBED_COLOR)
     .setAuthor({
       name: `${currentGuild.name}'s Review Statistics`,
       iconURL: currentGuild.iconURL() ?? undefined

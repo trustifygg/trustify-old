@@ -64,9 +64,9 @@ const guildSchema = new mongoose.Schema({
 		},
 	},
 	customEmbed: {
-		color: { type: String, default: '#058c42' },
+		color: { type: String, default: '#5865F2' },
 		footer: {
-			text: { type: String, default: 'Trustify - Simplifying reviews' },
+			text: { type: String, default: 'Reviews - Simplifying reviews' },
 		},
 	},
 	blacklistedRoles: {
@@ -79,7 +79,7 @@ const guildSchema = new mongoose.Schema({
 	},
 	dmNotification: {
 		enabled: { type: Boolean, default: true },
-		color: { type: String, default: '#058c42' },
+		color: { type: String, default: '#5865F2' },
 		title: { type: String, default: 'Thank you for your vouch!' },
 		description: { type: String, default: 'Thank you for your vouch! We really appreciate your feedback.' }
 	},
