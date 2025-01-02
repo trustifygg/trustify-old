@@ -144,7 +144,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       iconURL: guild.forceAnonymousReviews ? currentGuild.iconURL() ?? undefined : interaction.user.displayAvatarURL({ size: 128, forceStatic: false })
     })
     .setTitle(guild.reviewTitle || DEFAULT_REVIEW_TITLE)
-    .setDescription(reviewContent)
+    .setDescription(`> ${reviewContent}`)
     .addFields(
       { 
         name: 'Rating', 
@@ -158,7 +158,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       }
     )
     .setFooter({ 
-      text: `${guild.customEmbed?.footer?.text || DEFAULT_FOOTER} • ID: ${reviewId}`,
+      text: `${guild.customEmbed?.footer?.text || DEFAULT_FOOTER} • Review ID: ${reviewId}`,
       iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined
     });
 
