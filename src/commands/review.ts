@@ -245,6 +245,24 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     );
   }
 
+  try {
+    if (guild.dmOptIn) {
+      const dmEmbed = new EmbedBuilder()
+        .setColor((guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
+        .setTitle('Thank you for your vouch!')
+        .setDescription('Thank you for your vouch! We really appreciate your feedback.')
+        .setTimestamp()
+        .setFooter({
+          text: currentGuild.name,
+          iconURL: currentGuild.iconURL() ?? undefined
+        });
+
+      await interaction.user.send({ embeds: [dmEmbed] });
+    }
+  } catch (error) {
+    console.error('Failed to send DM:', error);
+  }
+
   // Send confirmation to user
   return interaction.reply({ 
     content: `Review posted in ${channel}!`, 

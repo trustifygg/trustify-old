@@ -52,6 +52,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined
     })
     .setDescription("Here's a list of Reviews' commands:")
+    .setThumbnail(interaction.client?.user?.displayAvatarURL() ?? undefined)
     .addFields(
       {
         name: '👤 User Commands',

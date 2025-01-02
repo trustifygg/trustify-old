@@ -23,6 +23,13 @@ export interface IGuild extends mongoose.Document {
 	};
 	blacklistedRoles: string[];
 	adminRoles: string[];
+	dmNotification: {
+		enabled: boolean;
+		color: string;
+		title: string;
+		description: string;
+	};
+	dmOptIn: boolean;
 }
 
 const guildSchema = new mongoose.Schema({
@@ -70,6 +77,16 @@ const guildSchema = new mongoose.Schema({
 		type: [String],
 		default: [],
 	},
+	dmNotification: {
+		enabled: { type: Boolean, default: true },
+		color: { type: String, default: '#058c42' },
+		title: { type: String, default: 'Thank you for your vouch!' },
+		description: { type: String, default: 'Thank you for your vouch! We really appreciate your feedback.' }
+	},
+	dmOptIn: {
+		type: Boolean,
+		default: true
+	}
 });
 
 export const guildModel = mongoose.model<IGuild>('GuildDB', guildSchema, 'Guilds');

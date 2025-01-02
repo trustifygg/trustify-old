@@ -2,8 +2,8 @@ import { ChatInputCommandInteraction } from 'discord.js';
 import { guildModel } from '../models/guild';
 
 export async function requireSetup(interaction: ChatInputCommandInteraction): Promise<boolean> {
-  // Skip check for setup command
-  if (interaction.commandName === 'setup') return true;
+  const allowedCommands = ['setup', 'help', 'botinfo'];
+  if (allowedCommands.includes(interaction.commandName)) return true;
 
   const guild = await guildModel.findOne({ guildId: interaction.guildId });
   
