@@ -65,7 +65,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       );
 
     return interaction.reply({ 
-      content: 'This server is already set up! Use `/config` to modify settings or visit our dashboard.',
+      content: 'This server is already set up! visit our dashboard to configure settings.',
       components: [row],
       ephemeral: true 
     });
