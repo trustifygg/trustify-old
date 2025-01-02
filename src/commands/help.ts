@@ -48,7 +48,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       name: `${BOT_NAME}'s Help Menu`,
       iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined
     })
-    .setDescription("Here's a list of Reviews' commands:")
+    .setDescription(`Here's a list of ${BOT_NAME}' commands:`)
     .setThumbnail(interaction.client?.user?.displayAvatarURL() ?? undefined)
     .addFields(
       {
