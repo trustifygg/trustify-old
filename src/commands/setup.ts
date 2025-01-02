@@ -54,6 +54,23 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     return interaction.reply({ content: ERRORS.GUILD_ONLY, ephemeral: true });
   }
 
+  const existingGuild = await guildModel.findOne({ guildId: currentGuild.id });
+  if (existingGuild) {
+    const row = new ActionRowBuilder<ButtonBuilder>()
+      .addComponents(
+        new ButtonBuilder()
+          .setLabel('Dashboard')
+          .setURL('https://trustify.gg/dashboard')
+          .setStyle(ButtonStyle.Link)
+      );
+
+    return interaction.reply({ 
+      content: 'This server is already set up! Use `/config` to modify settings or visit our dashboard.',
+      components: [row],
+      ephemeral: true 
+    });
+  }
+
   let guild = await guildModel.findOne({ guildId: currentGuild.id });
   
   // Get all options
