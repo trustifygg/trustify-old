@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, type ColorResolvable } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, type ColorResolvable, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { guildModel } from '../models/guild';
 import { 
   DEFAULT_EMBED_COLOR, 
@@ -48,10 +48,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const embed = new EmbedBuilder()
     .setColor((guild?.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
     .setAuthor({
-      name: `${BOT_NAME} Commands`,
-      iconURL: interaction.client.user?.displayAvatarURL() ?? undefined
+      name: `${BOT_NAME}'s Help Menu`,
+      iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined
     })
-    .setDescription('Here are all available commands:')
+    .setDescription("Here's a list of Reviews' commands:")
     .addFields(
       {
         name: '👤 User Commands',
@@ -65,9 +65,25 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       }
     )
     .setFooter({ 
-      text: DEFAULT_FOOTER,
-      iconURL: interaction.client.user?.displayAvatarURL() ?? undefined
+      text: `${DEFAULT_FOOTER} • Need help? Join our support server!`,
+      iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined
     });
 
-  return interaction.reply({ embeds: [embed], ephemeral: true });
+  const row = new ActionRowBuilder<ButtonBuilder>()
+    .addComponents(
+      new ButtonBuilder()
+        .setLabel('Invite Me')
+        .setURL('https://google.com')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Support Server')
+        .setURL('https://google.com')
+        .setStyle(ButtonStyle.Link)
+    );
+
+  return interaction.reply({ 
+    embeds: [embed], 
+    components: [row],
+    ephemeral: false 
+  });
 } 
