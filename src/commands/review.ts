@@ -164,7 +164,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
   // Add thumbnail if available
   if (currentGuild.iconURL()) {
-    embed.setThumbnail(currentGuild.iconURL() ?? undefined);
+    embed.setThumbnail(currentGuild.iconURL() ?? null);
   }
 
   // Send to configured review channel
