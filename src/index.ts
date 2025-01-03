@@ -4,55 +4,72 @@ import { connectToDatabase } from './config/mongodb';
 import fs from 'fs';
 import path from 'path';
 import { setClient } from './events/reviewLog';
+import { createReviewModal, handleUsefulButton } from './components/reviewButtons';
+import { requireSetup } from './utils/checkSetup';
 import { Logger } from './utils/logger';
 
 config();
 connectToDatabase();
 
-export interface ExtendedClient extends Client {
-	commands: Collection<
-		string,
-		{
-			data: { name: string };
-			execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
-		}
-	>;
-}
+app
+	.use(logger())
+	.use(secureHeaders())
+	.use(
+		cors({
+			origin: process.env.WEBSITE_URL || "http://localhost:3000",
+			credentials: true,
+			allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+			allowHeaders: ["Content-Type", "Authorization"],
+		})
+	)
+	.use(
+		rateLimiter({
+			windowMs: 15 * 60 * 1000,
+			limit: 100,
+			keyGenerator: (c: any) => "test",
+		})
+	)
+	.use(
+		"*",
+		sessionMiddleware({
+			store: new MongoStore(),
+			encryptionKey: Bun.env.SESSION_SECRET!,
+			expireAfterSeconds: 604800,
+			cookieOptions: {
+				secure: process.env.NODE_ENV === "production",
+				maxAge: 604800,
+				sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+				path: "/",
+				httpOnly: true,
+				domain:
+					process.env.NODE_ENV === "production"
+						? process.env.WEBSITE_URL
+						: undefined,
+			},
+		})
+	)
+	.get("/", (c) => c.json("Bonjour le monde!"))
+	.onError(errorHandler)
+	.notFound(notFoundHandler);
 
-const client = new Client({
-	intents: [GatewayIntentBits.Guilds],
-}) as ExtendedClient;
-client.commands = new Collection();
+const routesPath = path.join(__dirname, "api", "routes");
+const routeFiles = readdirSync(routesPath).filter((file) =>
+	file.endsWith(".ts")
+);
 
-// Load commands
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.ts'));
+routeFiles.forEach((file) => {
+	const routeName = file.split(".")[0];
+	const router = require(path.join(routesPath, file)).default;
+	app.route(routeName, router);
+  Logger.info(`Route loaded: ${routeName}`);
+});
 
-for (const file of commandFiles) {
-	const filePath = path.join(commandsPath, file);
-	const command = require(filePath);
-	if ('data' in command && 'execute' in command) {
-		client.commands.set(command.data.name, command);
-		Logger.info(`Loaded command: ${command.data.name}`);
-	}
-}
+manager
+	.spawn({ timeout: 10 * 1000 })
+	.then(() => Logger.info("All shards are running"))
+	.catch((err) => Logger.error(err));
 
-// Load events
-const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.ts'));
-
-for (const file of eventFiles) {
-	const filePath = path.join(eventsPath, file);
-	const { event } = require(filePath);
-
-	if (!event) continue;
-
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args, client));
-	} else {
-		client.on(event.name, (...args) => event.execute(...args, client));
-	}
-}
-
-setClient(client);
-client.login(process.env.DISCORD_TOKEN);
+export default {
+	port: PORT,
+	fetch: app.fetch,
+};

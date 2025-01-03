@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, Events, type Interaction } from 'discord.js';
 import { createReviewModal, handleUsefulButton } from '../components/reviewButtons';
 import { requireSetup } from '../utils/checkSetup';
-import type { ExtendedClient } from '..';
+import type { ExtendedClient } from '../main';
 
 export const event = {
 	name: Events.InteractionCreate,
