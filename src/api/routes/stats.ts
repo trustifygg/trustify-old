@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { reviewModel } from '../../models/review';
 import DiscordClient from '../../utils/client';
 import { Logger } from '../../utils/logger';
+import { manager } from '../..';
 
 const statsRoute = new Hono();
 
@@ -90,6 +91,30 @@ statsRoute.get('/', async (c) => {
 			},
 			500
 		);
+	}
+});
+
+statsRoute.get('/top', async (c) => {
+	try {
+		const res = await manager.broadcastEval(async (client) => {
+			const topGuilds = client.guilds.cache.sort((a, b) => b.memberCount - a.memberCount).first(20);
+
+			return topGuilds.map((guild) => ({
+				id: guild.id,
+				name: guild.name,
+				avatar: guild.iconURL({ size: 1024 }),
+				memberCount: guild.memberCount,
+			}));
+		});
+
+		const topGuilds = res.flat();
+
+		const overallTopGuilds = topGuilds.sort((a, b) => b.memberCount - a.memberCount).slice(0, 20);
+
+		return c.json(overallTopGuilds, 200);
+	} catch (err) {
+		Logger.error('Error fetching top reviews:' + err);
+		return c.json({ message: 'Internal server error' }, 500);
 	}
 });
 
