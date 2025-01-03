@@ -4,8 +4,6 @@ import { connectToDatabase } from './config/mongodb';
 import fs from 'fs';
 import path from 'path';
 import { setClient } from './events/reviewLog';
-import { createReviewModal, handleUsefulButton } from './components/reviewButtons';
-import { requireSetup } from './utils/checkSetup';
 import { Logger } from './utils/logger';
 
 config();
