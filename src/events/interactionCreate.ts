@@ -22,7 +22,7 @@ export const event = {
 				if (!interaction.replied && !interaction.deferred) {
 					await interaction.reply({
 						content: 'There was an error executing this command!',
-						ephemeral: true,
+						flags: ['Ephemeral'],
 					});
 				}
 			}
@@ -48,7 +48,7 @@ export const event = {
 			if (isNaN(rating) || rating < 1 || rating > 5) {
 				return interaction.reply({
 					content: 'Please provide a valid rating between 1 and 5.',
-					ephemeral: true,
+					flags: ['Ephemeral'],
 				});
 			}
 
@@ -89,7 +89,7 @@ export const event = {
 					if (!interaction.replied && !interaction.deferred) {
 						await interaction.reply({
 							content: 'There was an error processing your review!',
-							ephemeral: true,
+							flags: ['Ephemeral'],
 						});
 					}
 				}

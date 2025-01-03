@@ -44,7 +44,7 @@ export async function handleUsefulButton(interaction: ButtonInteraction) {
 	if (!review) {
 		return interaction.reply({
 			content: 'Review not found.',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 

@@ -85,7 +85,7 @@ statsRoute.get('/', async (c) => {
 		return c.json(stats, 200);
 	} catch (error) {
 		Logger.error('Error fetching stats:' + error);
-		c.json(
+		return c.json(
 			{
 				message: 'Internal server error',
 			},

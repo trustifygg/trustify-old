@@ -18,12 +18,12 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
-		return interaction.reply({ content: ERRORS.GUILD_ONLY, ephemeral: true });
+		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
 	}
 
 	const guild = await guildModel.findOne({ guildId: currentGuild.id });
 	if (!guild) {
-		return interaction.reply({ content: ERRORS.NEEDS_SETUP, ephemeral: true });
+		return interaction.reply({ content: ERRORS.NEEDS_SETUP, flags: ['Ephemeral'] });
 	}
 
 	const member = await currentGuild.members.fetch(interaction.user.id);
@@ -34,7 +34,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!hasPermission) {
 		return interaction.reply({
 			content: 'You do not have permission to use this command.',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -45,7 +45,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!interaction.channel?.isTextBased()) {
 		return interaction.reply({
 			content: 'This command can only be used in text channels.',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -55,6 +55,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 	return interaction.reply({
 		content: 'Review button has been added!',
-		ephemeral: true,
+		flags: ['Ephemeral'],
 	});
 }

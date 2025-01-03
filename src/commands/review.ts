@@ -77,7 +77,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!currentGuild) {
 		return interaction.reply({
 			content: ERRORS.GUILD_ONLY,
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -85,14 +85,14 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!guild) {
 		return interaction.reply({
 			content: ERRORS.NEEDS_SETUP,
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
 	if (!guild.channel) {
 		return interaction.reply({
 			content: ERRORS.NO_REVIEW_CHANNEL,
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -101,14 +101,14 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (guild.blacklistedRoles.some((roleId) => member.roles.cache.has(roleId))) {
 		return interaction.reply({
 			content: 'You are not allowed to submit reviews.',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
 	if (guild.reviewRoles.length > 0 && !guild.reviewRoles.some((roleId) => member.roles.cache.has(roleId))) {
 		return interaction.reply({
 			content: 'You need one of the required roles to submit reviews.',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -168,7 +168,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!channel?.isTextBased()) {
 		return interaction.reply({
 			content: 'The configured review channel is invalid. Ask an admin to fix this using /setup',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -254,6 +254,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 	return interaction.reply({
 		content: `Review posted in ${channel}!`,
-		ephemeral: true,
+		flags: ['Ephemeral'],
 	});
 }

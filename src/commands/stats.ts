@@ -28,18 +28,18 @@ function getProgressBar(percentage: number): string {
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
-		return interaction.reply({ content: ERRORS.GUILD_ONLY, ephemeral: true });
+		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
 	}
 
 	const guild = await guildModel.findOne({ guildId: currentGuild.id });
 	if (!guild) {
-		return interaction.reply({ content: ERRORS.NEEDS_SETUP, ephemeral: true });
+		return interaction.reply({ content: ERRORS.NEEDS_SETUP, flags: ['Ephemeral'] });
 	}
 
 	// Get all reviews
 	const reviews = await reviewModel.find({ guildId: currentGuild.id }).sort({ createdAt: -1 });
 	if (!reviews.length) {
-		return interaction.reply({ content: 'No reviews found for this server.', ephemeral: true });
+		return interaction.reply({ content: 'No reviews found for this server.', flags: ['Ephemeral'] });
 	}
 
 	// Calculate statistics

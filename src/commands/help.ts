@@ -17,7 +17,7 @@ export const data = new SlashCommandBuilder().setName('help').setDescription('Vi
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
-		return interaction.reply({ content: ERRORS.GUILD_ONLY, ephemeral: true });
+		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
 	}
 
 	// Load all commands
@@ -51,7 +51,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			name: `${BOT_NAME}'s Help Menu`,
 			iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined,
 		})
-		.setDescription("Here's a list of Reviews' commands:")
+		.setDescription(`Here's a list of ${BOT_NAME}'s commands:`)
 		.setThumbnail(interaction.client?.user?.displayAvatarURL() ?? undefined)
 		.addFields(
 			{
@@ -78,6 +78,5 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	return interaction.reply({
 		embeds: [embed],
 		components: [row],
-		ephemeral: false,
 	});
 }

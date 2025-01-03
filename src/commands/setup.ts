@@ -51,7 +51,7 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
-		return interaction.reply({ content: ERRORS.GUILD_ONLY, ephemeral: true });
+		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
 	}
 
 	const existingGuild = await guildModel.findOne({ guildId: currentGuild.id });
@@ -63,7 +63,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		return interaction.reply({
 			content: 'This server is already set up! visit our dashboard to configure settings.',
 			components: [row],
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -114,14 +114,14 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!('isTextBased' in logsChannel) || !logsChannel.isTextBased()) {
 		return interaction.reply({
 			content: ERRORS.LOGS_TEXT_ONLY,
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
 	if (!guild) {
 		return interaction.reply({
 			content: ERRORS.SETUP_FAILED,
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -201,5 +201,5 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		}
 	}
 
-	return interaction.reply({ embeds: [embed], ephemeral: true });
+	return interaction.reply({ embeds: [embed], flags: ['Ephemeral'] });
 }

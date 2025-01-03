@@ -10,7 +10,7 @@ export async function requireSetup(interaction: ChatInputCommandInteraction): Pr
 	if (!guild) {
 		await interaction.reply({
 			content: 'This server needs to be set up first! Please ask an admin to use the `/setup` command.',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 		return false;
 	}

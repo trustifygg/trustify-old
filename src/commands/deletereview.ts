@@ -14,12 +14,12 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
-		return interaction.reply({ content: ERRORS.GUILD_ONLY, ephemeral: true });
+		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
 	}
 
 	const guild = await guildModel.findOne({ guildId: currentGuild.id });
 	if (!guild) {
-		return interaction.reply({ content: ERRORS.NEEDS_SETUP, ephemeral: true });
+		return interaction.reply({ content: ERRORS.NEEDS_SETUP, flags: ['Ephemeral'] });
 	}
 
 	// Check if user has permission (admin or has admin role)
@@ -31,7 +31,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!hasPermission) {
 		return interaction.reply({
 			content: 'You do not have permission to delete reviews.',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -44,7 +44,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!review) {
 		return interaction.reply({
 			content: 'Review not found.',
-			ephemeral: true,
+			flags: ['Ephemeral'],
 		});
 	}
 
@@ -76,6 +76,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 	return interaction.reply({
 		content: `Review ${reviewId} has been deleted.`,
-		ephemeral: true,
+		flags: ['Ephemeral'],
 	});
 }
