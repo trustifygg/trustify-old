@@ -35,7 +35,7 @@ const reviewSchema = new mongoose.Schema({
 	attachment: { type: String },
 	useful: {
 		count: { type: Number, default: 0, required: true },
-		users: { type: [String], default: [], required: true }
+		users: { type: [String], default: [], required: true },
 	},
 	createdAt: {
 		type: Date,

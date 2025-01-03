@@ -1,14 +1,7 @@
-import {
-	ChatInputCommandInteraction,
-	Events,
-	type Interaction,
-} from "discord.js";
-import {
-	createReviewModal,
-	handleUsefulButton,
-} from "../components/reviewButtons";
-import { requireSetup } from "../utils/checkSetup";
-import type { ExtendedClient } from "..";
+import { ChatInputCommandInteraction, Events, type Interaction } from 'discord.js';
+import { createReviewModal, handleUsefulButton } from '../components/reviewButtons';
+import { requireSetup } from '../utils/checkSetup';
+import type { ExtendedClient } from '..';
 
 export const event = {
 	name: Events.InteractionCreate,
@@ -27,7 +20,7 @@ export const event = {
 				console.error(error);
 				if (!interaction.replied && !interaction.deferred) {
 					await interaction.reply({
-						content: "There was an error executing this command!",
+						content: 'There was an error executing this command!',
 						ephemeral: true,
 					});
 				}
@@ -36,46 +29,34 @@ export const event = {
 
 		// Handle button clicks
 		else if (interaction.isButton()) {
-			if (
-				interaction.customId !== "submit_review" &&
-				!(await requireSetup(interaction as any))
-			)
-				return;
+			if (interaction.customId !== 'submit_review' && !(await requireSetup(interaction as any))) return;
 
-			if (interaction.customId === "submit_review") {
+			if (interaction.customId === 'submit_review') {
 				const modal = createReviewModal();
 				await interaction.showModal(modal);
-			} else if (interaction.customId.startsWith("useful_")) {
+			} else if (interaction.customId.startsWith('useful_')) {
 				await handleUsefulButton(interaction);
 			}
 		}
 
 		// Handle modal submissions
-		else if (
-			interaction.isModalSubmit() &&
-			interaction.customId === "review_modal"
-		) {
-			const reviewContent =
-				interaction.fields.getTextInputValue("review_content");
-			const rating = parseInt(
-				interaction.fields.getTextInputValue("review_rating")
-			);
+		else if (interaction.isModalSubmit() && interaction.customId === 'review_modal') {
+			const reviewContent = interaction.fields.getTextInputValue('review_content');
+			const rating = parseInt(interaction.fields.getTextInputValue('review_rating'));
 
 			if (isNaN(rating) || rating < 1 || rating > 5) {
 				return interaction.reply({
-					content: "Please provide a valid rating between 1 and 5.",
+					content: 'Please provide a valid rating between 1 and 5.',
 					ephemeral: true,
 				});
 			}
 
 			const modifiedInteraction = {
 				...interaction,
-				commandName: "review",
+				commandName: 'review',
 				options: {
-					getInteger: (name: string, required?: boolean) =>
-						name === "stars" ? rating : null,
-					getString: (name: string, required?: boolean) =>
-						name === "message" ? reviewContent : null,
+					getInteger: (name: string, required?: boolean) => (name === 'stars' ? rating : null),
+					getString: (name: string, required?: boolean) => (name === 'message' ? reviewContent : null),
 					get: () => null,
 					getFocused: () => null,
 					getMentionable: () => null,
@@ -98,7 +79,7 @@ export const event = {
 				isChatInputCommand: () => true,
 			} as ChatInputCommandInteraction;
 
-			const command = client.commands.get("review");
+			const command = client.commands.get('review');
 			if (command) {
 				try {
 					await command.execute(modifiedInteraction);
@@ -106,7 +87,7 @@ export const event = {
 					console.error(error);
 					if (!interaction.replied && !interaction.deferred) {
 						await interaction.reply({
-							content: "There was an error processing your review!",
+							content: 'There was an error processing your review!',
 							ephemeral: true,
 						});
 					}

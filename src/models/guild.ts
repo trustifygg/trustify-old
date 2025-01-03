@@ -81,12 +81,12 @@ const guildSchema = new mongoose.Schema({
 		enabled: { type: Boolean, default: true },
 		color: { type: String, default: '#5865F2' },
 		title: { type: String, default: 'Thank you for your vouch!' },
-		description: { type: String, default: 'Thank you for your vouch! We really appreciate your feedback.' }
+		description: { type: String, default: 'Thank you for your vouch! We really appreciate your feedback.' },
 	},
 	dmOptIn: {
 		type: Boolean,
-		default: true
-	}
+		default: true,
+	},
 });
 
 export const guildModel = mongoose.model<IGuild>('GuildDB', guildSchema, 'Guilds');
