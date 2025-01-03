@@ -1,22 +1,23 @@
-import { Hono } from "hono";
-import { reviewModel } from "../../models/review";
-import DiscordClient from "../../utils/client";
+import { Hono } from 'hono';
+import { reviewModel } from '../../models/review';
+import DiscordClient from '../../utils/client';
+import { Logger } from '../../utils/logger';
 
 const statsRoute = new Hono();
 
 const client = DiscordClient.getInstance();
 
-statsRoute.get("/", async (c) => {
+statsRoute.get('/', async (c) => {
 	try {
 		const reviewStats = await reviewModel.aggregate([
 			{
 				$group: {
 					_id: null,
 					totalReviews: { $sum: 1 },
-					averageRating: { $avg: "$rating" },
-					totalUsefulVotes: { $sum: "$useful.count" },
+					averageRating: { $avg: '$rating' },
+					totalUsefulVotes: { $sum: '$useful.count' },
 					anonymousReviews: {
-						$sum: { $cond: ["$anonymousReview", 1, 0] },
+						$sum: { $cond: ['$anonymousReview', 1, 0] },
 					},
 				},
 			},
@@ -30,7 +31,7 @@ statsRoute.get("/", async (c) => {
 		const ratingsDistribution = await reviewModel.aggregate([
 			{
 				$group: {
-					_id: "$rating",
+					_id: '$rating',
 					count: { $sum: 1 },
 				},
 			},
@@ -49,13 +50,13 @@ statsRoute.get("/", async (c) => {
 			{
 				$group: {
 					_id: {
-						year: { $year: "$createdAt" },
-						month: { $month: "$createdAt" },
+						year: { $year: '$createdAt' },
+						month: { $month: '$createdAt' },
 					},
 					count: { $sum: 1 },
 				},
 			},
-			{ $sort: { "_id.year": 1, "_id.month": 1 } },
+			{ $sort: { '_id.year': 1, '_id.month': 1 } },
 		]);
 
 		const stats = {
@@ -67,22 +68,25 @@ statsRoute.get("/", async (c) => {
 				totalUsefulVotes: reviewStats[0]?.totalUsefulVotes || 0,
 				anonymousReviews: reviewStats[0]?.anonymousReviews || 0,
 			},
-			ratingsDistribution: ratingsDistribution.reduce((acc, curr) => {
-				acc[curr._id] = curr.count;
-				return acc;
-			}, {} as Record<number, number>),
+			ratingsDistribution: ratingsDistribution.reduce(
+				(acc, curr) => {
+					acc[curr._id] = curr.count;
+					return acc;
+				},
+				{} as Record<number, number>
+			),
 			reviewsOverTime: reviewsOverTime.map((item) => ({
-				date: `${item._id.year}-${String(item._id.month).padStart(2, "0")}`,
+				date: `${item._id.year}-${String(item._id.month).padStart(2, '0')}`,
 				count: item.count,
 			})),
 		};
 
 		return c.json(stats, 200);
 	} catch (error) {
-		console.error("Error fetching stats:", error);
+		Logger.error('Error fetching stats:' + error);
 		c.json(
 			{
-				message: "Internal server error",
+				message: 'Internal server error',
 			},
 			500
 		);

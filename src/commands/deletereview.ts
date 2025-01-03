@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits }
 import { reviewModel } from '../models/review';
 import { guildModel } from '../models/guild';
 import { ERRORS } from '../constants';
+import { Logger } from '../utils/logger';
 
 export const data = new SlashCommandBuilder()
 	.setName('deletereview')
@@ -35,7 +36,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	}
 
 	const reviewId = interaction.options.getString('review_id', true);
-	const review = await reviewModel.findOne({ reviewId, guildId: currentGuild.id });
+	const review = await reviewModel.findOne({
+		reviewId,
+		guildId: currentGuild.id,
+	});
 
 	if (!review) {
 		return interaction.reply({
@@ -52,7 +56,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 				await message.delete();
 			}
 		} catch (error) {
-			console.error('Failed to delete review message:', error);
+			Logger.error('Failed to delete review message:' + error);
 		}
 	}
 
@@ -63,7 +67,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 				await thread.delete();
 			}
 		} catch (error) {
-			console.error('Failed to delete review thread:', error);
+			Logger.error('Failed to delete review thread:' + error);
 		}
 	}
 

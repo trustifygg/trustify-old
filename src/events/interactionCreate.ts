@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, Events, type Interaction } from 'discord.j
 import { createReviewModal, handleUsefulButton } from '../components/reviewButtons';
 import { requireSetup } from '../utils/checkSetup';
 import type { ExtendedClient } from '../main';
+import { Logger } from '../utils/logger';
 
 export const event = {
 	name: Events.InteractionCreate,
@@ -17,7 +18,7 @@ export const event = {
 
 				await command.execute(interaction);
 			} catch (error) {
-				console.error(error);
+				Logger.error(String(error));
 				if (!interaction.replied && !interaction.deferred) {
 					await interaction.reply({
 						content: 'There was an error executing this command!',
@@ -84,7 +85,7 @@ export const event = {
 				try {
 					await command.execute(modifiedInteraction);
 				} catch (error) {
-					console.error(error);
+					Logger.error(String(error));
 					if (!interaction.replied && !interaction.deferred) {
 						await interaction.reply({
 							content: 'There was an error processing your review!',

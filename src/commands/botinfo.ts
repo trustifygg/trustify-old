@@ -6,11 +6,9 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	ActionRowBuilder,
-	type ColorResolvable,
 } from 'discord.js';
 import { reviewModel } from '../models/review';
-import { guildModel } from '../models/guild';
-import { DEFAULT_EMBED_COLOR, BOT_NAME, BOT_VERSION, DEVELOPERS, BOT_TAGLINE } from '../constants';
+import { DEFAULT_EMBED_COLOR, BOT_NAME, BOT_VERSION, DEVELOPERS } from '../constants';
 
 export const data = new SlashCommandBuilder().setName('botinfo').setDescription('View bot information and statistics');
 
@@ -41,7 +39,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined,
 		})
 		.setDescription(
-			`${BOT_NAME} ${BOT_TAGLINE}\n\n` +
+			`Trustify is a 100% free review bot designed to make gathering and managing reviews simple. It helps you collect feedback easily, building trust with your members.\n\n` +
 				`**📊 Statistics**\n` +
 				`\`\`\`\n` +
 				`Servers    : ${formatNumber(interaction.client.guilds.cache.size)}\n` +

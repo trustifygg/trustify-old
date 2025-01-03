@@ -12,7 +12,7 @@
 		"lineWidth": 120,
 		"attributePosition": "auto",
 		"bracketSpacing": true,
-		"ignore":  ["**/dist/", "**/coverage/"]
+		"ignore": ["**/dist/", "**/coverage/"]
 	},
 	"organizeImports": { "enabled": true },
 	"linter": {

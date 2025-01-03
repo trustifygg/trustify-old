@@ -1,6 +1,7 @@
 import { EmbedBuilder, TextChannel, Client, type ColorResolvable } from 'discord.js';
 import { guildModel } from '../models/guild';
 import { DEFAULT_EMBED_COLOR } from '../constants';
+import { Logger } from '../utils/logger';
 
 let client: Client;
 
@@ -22,6 +23,6 @@ export async function logReview(guildId: string, content: string, color: ColorRe
 
 		await channel.send({ embeds: [embed] });
 	} catch (error) {
-		console.error('Failed to send review log:', error);
+		Logger.error('Failed to send review log:' + error);
 	}
 }

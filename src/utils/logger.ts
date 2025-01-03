@@ -5,7 +5,10 @@ const logger = createLogger({
 	format: format.combine(
 		format.colorize(),
 		format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-		format.printf(({ timestamp, level, message }) => `${timestamp} [${level}]: ${message}`)
+		format.printf(({ timestamp, level, message }) => {
+			const symbol = level === 'info' ? '[+]' : level === 'warn' ? '[!]' : level === 'error' ? '[-]' : '[*]';
+			return `${timestamp} ${symbol} [${level}]: ${message}`;
+		})
 	),
 	transports: [new transports.Console()],
 });

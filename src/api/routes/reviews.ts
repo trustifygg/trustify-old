@@ -1,17 +1,17 @@
-import { Hono } from "hono";
-import { authenticate } from "../middlewares/authMiddlewares";
-import DiscordClient from "../../utils/client";
-import { reviewModel } from "../../models/review";
+import { Hono } from 'hono';
+import { authenticate } from '../middlewares/authMiddlewares';
+import DiscordClient from '../../utils/client';
+import { reviewModel } from '../../models/review';
 
-import type { Variables } from "../..";
+import type { Variables } from '../..';
 
 const reviewsRoute = new Hono<{ Variables: Variables }>();
 
 const client = DiscordClient.getInstance();
 
-reviewsRoute.get("/:guildId", authenticate, async (c) => {
-	const guildId = c.req.param("guildId");
-	const user = c.get("user");
+reviewsRoute.get('/:guildId', authenticate, async (c) => {
+	const guildId = c.req.param('guildId');
+	const user = c.get('user');
 
 	if (!client.checkUserInGuild(guildId, user!.userId)) {
 		return c.json({ message: "You don't have access to this guild" }, 403);

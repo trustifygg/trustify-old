@@ -25,6 +25,10 @@ export const event = {
 				type: ActivityType.Watching,
 				name: `${totalReviews.toLocaleString()} reviews`,
 			},
+			{
+				type: ActivityType.Custom,
+				name: `${client.guilds.cache.size.toLocaleString()} servers`,
+			},
 		];
 
 		client.user.setActivity(statuses[0].name, {
@@ -62,7 +66,9 @@ export const event = {
 			Logger.info(`Started refreshing ${commands.length} application (/) commands.`);
 
 			const rest = new REST().setToken(process.env.DISCORD_TOKEN!);
-			await rest.put(Routes.applicationCommands(client.application.id), { body: commands });
+			await rest.put(Routes.applicationCommands(client.application.id), {
+				body: commands,
+			});
 
 			Logger.info(`Successfully reloaded ${commands.length} application (/) commands.`);
 		} catch (error) {

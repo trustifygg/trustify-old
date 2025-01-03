@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 export interface IGuild extends mongoose.Document {
 	guildId: string;
 	name: string;
@@ -36,15 +36,15 @@ const guildSchema = new mongoose.Schema({
 	guildId: { type: String, required: true, unique: true },
 	name: { type: String, required: true },
 	iconURL: String,
-	channel: { type: String, default: "" },
-	logsChannel: { type: String, default: "" },
+	channel: { type: String, default: '' },
+	logsChannel: { type: String, default: '' },
 	reviewRoles: {
 		type: [String],
 		default: [],
 		validate: [
 			{
 				validator: (array: string[]) => array.length <= 5,
-				message: "Cannot have more than 5 review roles",
+				message: 'Cannot have more than 5 review roles',
 			},
 		],
 	},
@@ -53,20 +53,20 @@ const guildSchema = new mongoose.Schema({
 	createThreads: { type: Boolean, default: true },
 	reviewButton: { type: Boolean, default: true },
 	usefulButton: { type: Boolean, default: true },
-	ratingEmoji: { type: String, default: "⭐" },
-	reviewTitle: { type: String, default: "New Review Submitted!" },
+	ratingEmoji: { type: String, default: '⭐' },
+	reviewTitle: { type: String, default: 'New Review Submitted!' },
 	customReviewButton: {
-		label: { type: String, default: "Submit Review" },
+		label: { type: String, default: 'Submit Review' },
 		color: {
 			type: String,
-			default: "blurple",
-			enum: ["blurple", "red", "green", "grey"],
+			default: 'blurple',
+			enum: ['blurple', 'red', 'green', 'grey'],
 		},
 	},
 	customEmbed: {
-		color: { type: String, default: "#5865F2" },
+		color: { type: String, default: '#5865F2' },
 		footer: {
-			text: { type: String, default: "Reviews - Simplifying reviews" },
+			text: { type: String, default: 'Reviews - Simplifying reviews' },
 		},
 	},
 	blacklistedRoles: {
@@ -79,11 +79,11 @@ const guildSchema = new mongoose.Schema({
 	},
 	dmNotification: {
 		enabled: { type: Boolean, default: true },
-		color: { type: String, default: "#5865F2" },
-		title: { type: String, default: "Thank you for your vouch!" },
+		color: { type: String, default: '#5865F2' },
+		title: { type: String, default: 'Thank you for your vouch!' },
 		description: {
 			type: String,
-			default: "Thank you for your vouch! We really appreciate your feedback.",
+			default: 'Thank you for your vouch! We really appreciate your feedback.',
 		},
 	},
 	dmOptIn: {
@@ -92,8 +92,4 @@ const guildSchema = new mongoose.Schema({
 	},
 });
 
-export const guildModel = mongoose.model<IGuild>(
-	"GuildDB",
-	guildSchema,
-	"Guilds"
-);
+export const guildModel = mongoose.model<IGuild>('GuildDB', guildSchema, 'Guilds');

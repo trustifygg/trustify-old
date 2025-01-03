@@ -1,9 +1,5 @@
-import {
-	Client,
-	Events,
-	GatewayIntentBits,
-	PermissionFlagsBits,
-} from "discord.js";
+import { Client, Events, GatewayIntentBits, PermissionFlagsBits } from 'discord.js';
+import { Logger } from './logger';
 
 export default class DiscordClient {
 	private static instance: DiscordClient;
@@ -19,18 +15,18 @@ export default class DiscordClient {
 
 	public async getClient(): Promise<Client> {
 		if (!this.client) {
-			console.debug("Creating new client");
+			Logger.debug('Creating new client');
 			this.client = new Client({
 				intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 			});
 			this.client.once(Events.ClientReady, (c) => {
-				console.info(`Ready! Logged in as ${c.user.tag}`);
+				Logger.info(`Ready! Logged in as ${c.user.tag}`);
 			});
-			if (process.env.NODE_ENV === "development") {
-				this.client.on("debug", console.debug);
+			if (process.env.NODE_ENV === 'development') {
+				this.client.on('debug', Logger.debug);
 			}
-			this.client.on("warn", console.warn);
-			this.client.on("error", console.error);
+			this.client.on('warn', Logger.warn);
+			this.client.on('error', Logger.error);
 			await this.client.login(process.env.DISCORD_BOT_TOKEN);
 		}
 		return this.client;

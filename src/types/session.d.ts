@@ -1,4 +1,4 @@
-import { IUser } from "../db/models/user";
+import { IUser } from '../db/models/user';
 
 export interface SessionUser {
 	userId: string;
@@ -13,7 +13,7 @@ export interface SessionData {
 	user?: SessionUser;
 }
 
-declare module "hono" {
+declare module 'hono' {
 	interface Context {
 		session: SessionData;
 	}

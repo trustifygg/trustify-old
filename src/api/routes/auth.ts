@@ -1,25 +1,26 @@
-import { Hono } from "hono";
-import { sign } from "hono/jwt";
-import { deleteCookie, setCookie } from "hono/cookie";
-import { exchangeCode, getUserData } from "../../utils/discord";
-import { authenticate } from "../middlewares/authMiddlewares";
-import { type IUser, userModel } from "../../models/users";
-import type { Variables } from "../..";
-import type { CookieOptions } from "hono/utils/cookie";
+import { Hono } from 'hono';
+import { sign } from 'hono/jwt';
+import { deleteCookie, setCookie } from 'hono/cookie';
+import { exchangeCode, getUserData } from '../../utils/discord';
+import { authenticate } from '../middlewares/authMiddlewares';
+import { type IUser, userModel } from '../../models/users';
+import type { Variables } from '../..';
+import type { CookieOptions } from 'hono/utils/cookie';
+import { Logger } from '../../utils/logger';
 
 const authRoute = new Hono<{ Variables: Variables }>();
 
 export const JWT_COOKIE_OPTIONS: CookieOptions = {
 	httpOnly: true,
-	secure: process.env.NODE_ENV === "production",
-	sameSite: "lax",
-	path: "/",
+	secure: process.env.NODE_ENV === 'production',
+	sameSite: 'lax',
+	path: '/',
 	maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
-authRoute.get("/login", (c) => {
+authRoute.get('/login', (c) => {
 	if (!Bun.env.DISCORD_CLIENT_ID || !Bun.env.DISCORD_REDIRECT_URI) {
-		return c.json({ message: "Discord OAuth configuration missing" }, 500);
+		return c.json({ message: 'Discord OAuth configuration missing' }, 500);
 	}
 
 	const DISCORD_OAUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${
@@ -31,12 +32,12 @@ authRoute.get("/login", (c) => {
 	return c.redirect(DISCORD_OAUTH_URL);
 });
 
-authRoute.get("/callback", async (c) => {
+authRoute.get('/callback', async (c) => {
 	try {
 		const { code } = c.req.query();
 
-		if (!code || typeof code !== "string") {
-			return c.json({ message: "No authorization code provided" }, 400);
+		if (!code || typeof code !== 'string') {
+			return c.json({ message: 'No authorization code provided' }, 400);
 		}
 
 		const tokens = await exchangeCode(code);
@@ -46,26 +47,22 @@ authRoute.get("/callback", async (c) => {
 			userId: userData.id,
 			username: userData.username,
 			email: userData.email,
-			avatar: userData.avatar || "",
+			avatar: userData.avatar || '',
 			accessToken: tokens.access_token,
 			refreshToken: tokens.refresh_token,
 		};
 
-		const user = await userModel.findOneAndUpdate(
-			{ userId: userData.id },
-			userUpdate,
-			{
-				upsert: true,
-				new: true,
-				select: "+accessToken +refreshToken",
-			}
-		);
+		const user = await userModel.findOneAndUpdate({ userId: userData.id }, userUpdate, {
+			upsert: true,
+			new: true,
+			select: '+accessToken +refreshToken',
+		});
 
 		if (!user) {
-			return c.json({ message: "Failed to create/update user" }, 500);
+			return c.json({ message: 'Failed to create/update user' }, 500);
 		}
 
-		const session = c.get("session");
+		const session = c.get('session');
 
 		const sessionUser: IUser = {
 			userId: user.userId,
@@ -79,7 +76,7 @@ authRoute.get("/callback", async (c) => {
 		session.user = sessionUser;
 
 		if (!Bun.env.JWT_SECRET) {
-			return c.json({ message: "JWT secret is not set" }, 500);
+			return c.json({ message: 'JWT secret is not set' }, 500);
 		}
 
 		const token = await sign(
@@ -90,28 +87,28 @@ authRoute.get("/callback", async (c) => {
 			Bun.env.JWT_SECRET
 		);
 
-		setCookie(c, "token", token, {
+		setCookie(c, 'token', token, {
 			...JWT_COOKIE_OPTIONS,
-			path: "/",
+			path: '/',
 			maxAge: 60 * 60 * 24 * 7,
 		});
 
 		return c.redirect(Bun.env.WEBSITE_URL!);
 	} catch (err) {
-		console.error("Auth callback error:", err);
+		Logger.error('Auth callback error:' + err);
 		return c.redirect(Bun.env.WEBSITE_URL!);
 	}
 });
 
-authRoute.get("/logout", authenticate, (c) => {
+authRoute.get('/logout', authenticate, (c) => {
 	try {
-		c.set("session", { user: undefined });
-		deleteCookie(c, "token");
+		c.set('session', { user: undefined });
+		deleteCookie(c, 'token');
 		c.redirect(Bun.env.WEBSITE_URL!);
-		return c.json({ message: "Logged out successfully" });
+		return c.json({ message: 'Logged out successfully' });
 	} catch (err) {
-		console.error("Logout error:", err);
-		return c.json({ message: "Logout failed" }, 500);
+		Logger.error('Logout error:' + err);
+		return c.json({ message: 'Logout failed' }, 500);
 	}
 });
 

@@ -1,17 +1,12 @@
-import { config } from "dotenv";
-import {
-	Client,
-	GatewayIntentBits,
-	Collection,
-	ChatInputCommandInteraction,
-} from "discord.js";
-import { connectToDatabase } from "./config/mongodb";
-import fs from "fs";
-import path from "path";
-import { setClient } from "./events/reviewLog";
-import { Logger } from "./utils/logger";
+import { config } from 'dotenv';
+import { Client, GatewayIntentBits, Collection, ChatInputCommandInteraction } from 'discord.js';
+import { connectToDatabase } from './config/mongodb';
+import fs from 'fs';
+import path from 'path';
+import { setClient } from './events/reviewLog';
+import { Logger } from './utils/logger';
 
-import { ClusterClient, getInfo } from "discord-hybrid-sharding";
+import { ClusterClient, getInfo } from 'discord-hybrid-sharding';
 
 config();
 connectToDatabase();
@@ -38,24 +33,20 @@ client.cluster = new ClusterClient(client);
 client.commands = new Collection();
 
 // Load commands
-const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs
-	.readdirSync(commandsPath)
-	.filter((file) => file.endsWith(".ts"));
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.ts'));
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
 	const command = require(filePath);
-	if ("data" in command && "execute" in command) {
+	if ('data' in command && 'execute' in command) {
 		client.commands.set(command.data.name, command);
 	}
 }
 
 // Load events
-const eventsPath = path.join(__dirname, "events");
-const eventFiles = fs
-	.readdirSync(eventsPath)
-	.filter((file) => file.endsWith(".ts"));
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.ts'));
 
 for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);

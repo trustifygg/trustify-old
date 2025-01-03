@@ -24,6 +24,7 @@ import {
 	ERRORS,
 } from '../constants';
 import { logReview } from '../events/reviewLog';
+import { Logger } from '../utils/logger';
 
 // Utility functions
 function generateReviewId(): string {
@@ -237,8 +238,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		if (guild.dmOptIn) {
 			const dmEmbed = new EmbedBuilder()
 				.setColor((guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
-				.setTitle('Thank you for your vouch!')
-				.setDescription('Thank you for your vouch! We really appreciate your feedback.')
+				.setTitle('Thank you for your review!')
+				.setDescription('Thank you for your review! We really appreciate your feedback.')
 				.setTimestamp()
 				.setFooter({
 					text: currentGuild.name,
@@ -248,7 +249,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			await interaction.user.send({ embeds: [dmEmbed] });
 		}
 	} catch (error) {
-		console.error('Failed to send DM:', error);
+		Logger.error('Failed to send DM:' + error);
 	}
 
 	return interaction.reply({

@@ -1,23 +1,24 @@
-import { Hono } from "hono";
-import { userModel } from "../../models/users";
-import { authenticate } from "../middlewares/authMiddlewares";
-import { getBotGuilds, getUserGuilds } from "../../utils/discord";
-import { refreshUserTokens } from "../../utils/auth";
-import type { Variables } from "../..";
+import { Hono } from 'hono';
+import { userModel } from '../../models/users';
+import { authenticate } from '../middlewares/authMiddlewares';
+import { getBotGuilds, getUserGuilds } from '../../utils/discord';
+import { refreshUserTokens } from '../../utils/auth';
+import type { Variables } from '../..';
+import { Logger } from '../../utils/logger';
 
 const usersRoute = new Hono<{ Variables: Variables }>();
 
-usersRoute.get("/@me", authenticate, async (c) => {
+usersRoute.get('/@me', authenticate, async (c) => {
 	try {
-		const user = c.get("user");
+		const user = c.get('user');
 		if (!user) {
-			return c.json({ message: "Unauthorized" }, 401);
+			return c.json({ message: 'Unauthorized' }, 401);
 		}
 
 		const userData = await userModel.findOne({ userId: user.userId });
 
 		if (!userData) {
-			return c.json({ message: "User not found" }, 404);
+			return c.json({ message: 'User not found' }, 404);
 		}
 
 		const userRes = {
@@ -30,17 +31,17 @@ usersRoute.get("/@me", authenticate, async (c) => {
 
 		return c.json(userRes, 200);
 	} catch (err) {
-		console.error("Error fetching user:", err);
-		return c.json({ message: "Internal server error" }, 500);
+		Logger.error('Error fetching user:' + err);
+		return c.json({ message: 'Internal server error' }, 500);
 	}
 });
 
-usersRoute.get("/@me/guilds", authenticate, async (c) => {
+usersRoute.get('/@me/guilds', authenticate, async (c) => {
 	try {
-		const user = c.get("user");
+		const user = c.get('user');
 
 		if (!user) {
-			return c.json({ message: "Unauthorized" }, 401);
+			return c.json({ message: 'Unauthorized' }, 401);
 		}
 
 		try {
@@ -49,9 +50,7 @@ usersRoute.get("/@me/guilds", authenticate, async (c) => {
 			const MANAGE_GUILD_PERMISSION = BigInt(1) << BigInt(5);
 			const managedGuilds = guilds.filter((guild) => {
 				const permissions = BigInt(guild.permissions);
-				return (
-					(permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION
-				);
+				return (permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
 			});
 
 			const botGuilds = await getBotGuilds(Bun.env.DISCORD_BOT_TOKEN!);
@@ -66,7 +65,7 @@ usersRoute.get("/@me/guilds", authenticate, async (c) => {
 
 			return c.json(guildsRes, 200);
 		} catch (error: any) {
-			if (error.message.includes("401")) {
+			if (error.message.includes('401')) {
 				try {
 					const { user: refreshedUser } = await refreshUserTokens(user, c);
 					const guilds = await getUserGuilds(refreshedUser.accessToken);
@@ -74,10 +73,7 @@ usersRoute.get("/@me/guilds", authenticate, async (c) => {
 					const MANAGE_GUILD_PERMISSION = BigInt(1) << BigInt(5);
 					const managedGuilds = guilds.filter((guild) => {
 						const permissions = BigInt(guild.permissions);
-						return (
-							(permissions & MANAGE_GUILD_PERMISSION) ===
-							MANAGE_GUILD_PERMISSION
-						);
+						return (permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
 					});
 
 					const botGuilds = await getBotGuilds(Bun.env.DISCORD_BOT_TOKEN!);
@@ -92,17 +88,14 @@ usersRoute.get("/@me/guilds", authenticate, async (c) => {
 
 					return c.json(guildsRes, 200);
 				} catch (refreshError) {
-					return c.json(
-						{ message: "Session expired, please login again" },
-						401
-					);
+					return c.json({ message: 'Session expired, please login again' }, 401);
 				}
 			}
 			throw error;
 		}
 	} catch (err) {
-		console.error("Error fetching user guilds:", err);
-		return c.json({ message: "Internal server error" }, 500);
+		Logger.error('Error fetching user guilds:' + err);
+		return c.json({ message: 'Internal server error' }, 500);
 	}
 });
 
