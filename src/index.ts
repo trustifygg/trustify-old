@@ -41,6 +41,7 @@ import { rateLimiter } from "hono-rate-limiter";
 import { sessionMiddleware } from "hono-sessions";
 import { errorHandler, notFoundHandler } from "./api/middlewares/errorMiddlewares";
 import { MongoStore } from "./utils/mongoStore";
+import { connectToDatabase } from "./config/mongodb";
 
 export type Variables = {
 	user?: IUser;
@@ -49,6 +50,8 @@ export type Variables = {
 
 const app = new Hono<{ Variables: Variables }>().basePath("/v1");
 const PORT = Bun.env.PORT || 5000;
+
+connectToDatabase();
 
 app
 	.use(logger())
