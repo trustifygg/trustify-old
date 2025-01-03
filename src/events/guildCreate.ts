@@ -1,5 +1,5 @@
 import { Events, EmbedBuilder, Guild } from 'discord.js';
-import { DEFAULT_EMBED_COLOR } from '../constants';
+import { BOT_NAME, DEFAULT_EMBED_COLOR } from '../constants';
 import type { ColorResolvable } from 'discord.js';
 export const event = {
 	name: Events.GuildCreate,

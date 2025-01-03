@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ClusterManager } from 'discord-hybrid-sharding';
 import { Logger } from './utils/logger';
 import { ChildProcess } from 'child_process';
@@ -46,7 +47,19 @@ export type Variables = {
 
 const app = new Hono<{ Variables: Variables }>().basePath('/v1');
 const PORT = Bun.env.PORT || 5000;
+=======
+import { config } from 'dotenv';
+import { Client, GatewayIntentBits, Collection, ChatInputCommandInteraction } from 'discord.js';
+import { connectToDatabase } from './config/mongodb';
+import fs from 'fs';
+import path from 'path';
+import { setClient } from './events/reviewLog';
+import { createReviewModal, handleUsefulButton } from './components/reviewButtons';
+import { requireSetup } from './utils/checkSetup';
+import { Logger } from './utils/logger';
+>>>>>>> 4acdf1b13fe71ddcfef05e8b3d331f94a16a3787
 
+config();
 connectToDatabase();
 
 app
