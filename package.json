@@ -4,9 +4,12 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "start": "bun run src/index.ts"
+    "start": "bun run src/index.ts",
+    "format": "bunx biome format --write .",
+    "lint": "bunx biome lint --write ." 
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/bun": "latest"
   },
   "peerDependencies": {
@@ -17,6 +20,7 @@
     "discord-hybrid-sharding": "^2.2.3",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.7",
+    "hono": "^4.6.15",
     "mongoose": "^8.9.3",
     "winston": "^3.17.0"
   }
