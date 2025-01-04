@@ -1,16 +1,22 @@
 import { Hono } from 'hono';
 import { Webhook } from '@top-gg/sdk';
 import DiscordClient from '../../utils/client';
+import type { TopGGWebhook } from '../../types';
 
 const voteRoute = new Hono();
 
-const wh = new Webhook(process.env.TOPGG_WEBHOOK_AUTH);
+voteRoute.post('/', async (c) => {
+	const authKey = c.req.header('Authorization');
 
-const discordClient = DiscordClient.getInstance();
+	if (authKey !== Bun.env.TOPGG_TOKEN) {
+		return c.json({ message: 'Invalid authorization key' }, 401);
+	}
 
-voteRoute.post(
-	'/topgg'
-	// TODO: Add custom implementation since @top/sdk doesn't support Hono
-);
+	const body: TopGGWebhook = await c.req.json();
+
+	if (body.type !== 'upvote') {
+		return c.json({ message: 'Invalid webhook type' }, 400);
+	}
+});
 
 export default voteRoute;

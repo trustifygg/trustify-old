@@ -1,13 +1,12 @@
 import type { Context } from 'hono';
 import { Logger } from '../../utils/logger';
+import { sendError } from '../../utils/sendError';
 
 export const errorHandler = (err: Error, c: Context) => {
-	const message = err.message || 'Internal Server Error';
-
-	Logger.error(`${err}`);
+	Logger.error(err);
 
 	return c.json({
-		message,
+		message: err.message,
 		error: process.env.NODE_ENV === 'development' ? c.error : undefined,
 	});
 };

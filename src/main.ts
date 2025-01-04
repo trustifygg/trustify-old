@@ -1,10 +1,13 @@
 import { config } from 'dotenv';
-import { Client, GatewayIntentBits, Collection, ChatInputCommandInteraction } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, ChatInputCommandInteraction, Guild, User } from 'discord.js';
 import { connectToDatabase } from './config/mongodb';
 import fs from 'fs';
 import path from 'path';
 import { setClient } from './events/reviewLog';
 import { ClusterClient, getInfo } from 'discord-hybrid-sharding';
+import DiscordClient from './utils/client';
+import { Logger } from './utils/logger';
+import { sendError } from './utils/sendError';
 
 config();
 connectToDatabase();
@@ -59,6 +62,29 @@ for (const file of eventFiles) {
 	}
 }
 
-setClient(client);
+client.on('error', (error) => {
+	sendError(client, error, 'error');
+});
+
+client.rest.on('rateLimited', (data) => {
+	Logger.debug(data);
+});
+
+const verifyAndSend = (error: Error, name: string) => {
+	sendError(client, error, name);
+};
+
+process.on('unhandledRejection', (error: Error) => {
+	verifyAndSend(error, 'Unhandled Promise Rejection');
+});
+process.on('uncaughtException', (error) => {
+	verifyAndSend(error, 'Uncaught Exception');
+});
+
+process.on('uncaughtExceptionMonitor', (error) => {
+	verifyAndSend(error, 'Uncaught Exception Monitor');
+});
+
+setClient(client)
 
 void client.login(Bun.env.DISCORD_TOKEN);

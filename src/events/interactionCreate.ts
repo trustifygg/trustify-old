@@ -10,7 +10,7 @@ export const event = {
 	name: Events.InteractionCreate,
 	once: false,
 	async execute(interaction: Interaction, client: ExtendedClient) {
-		const guildData = await guildModel.findOne({ guildId: interaction.guildId }) as IGuild;
+		const guildData = (await guildModel.findOne({ guildId: interaction.guildId })) as IGuild;
 
 		if (interaction.isChatInputCommand()) {
 			await sendWebhookLog(interaction, 'command');

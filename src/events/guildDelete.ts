@@ -2,31 +2,34 @@ import { EmbedBuilder, Events, WebhookClient, type DateResolvable, type Guild } 
 import type { ExtendedClient } from '../main';
 import { getDynamicTime } from '../utils/getDynamicTime';
 import { guildModel } from '../models/guild';
+import { Logger } from '../utils/logger';
 
 export const event = {
 	name: Events.GuildDelete,
 	once: false,
 	execute: async (guild: Guild, client: ExtendedClient) => {
+		const existingGuild = await guildModel.findOne({ guildId: guild.id });
+		if (!existingGuild) {
+			return;
+		}
+
 		await guildModel.deleteOne({ guildId: guild.id });
 
-		const detailedTime = (date: DateResolvable) =>
-			`${getDynamicTime(date, 'LONG_TIME_AND_DATE')}  ${getDynamicTime(date, 'RELATIVE')}`;
+		try {
+			const webhook = new WebhookClient({
+				url: Bun.env.GUILD_WEBHOOK_URL!,
+			});
 
-		const webhook = new WebhookClient({
-			url: 'https://discord.com/api/webhooks/1200631483250004078/DHI0tOHmwlG5ADiIjeNLTM4ijBmyKTOZ3woUlLfZkptCA-e8S-qRpm8ifeLOVKBEcntL',
-		});
+			const owner = client.users.cache.get(guild.ownerId);
+			const leaveTime = new Date();
 
-		const owner = client.users.cache.get(guild.ownerId);
+			const description = `Name: ${guild.name} (${guild.id})
+Owner: ${owner?.username ?? 'Unknown'} (${owner?.id ?? 'Unknown'})
+Members: ${guild.memberCount}
+Total Guilds: ${client.guilds.cache.size}
+Left: ${getDynamicTime(leaveTime, 'LONG_TIME_AND_DATE')} (${getDynamicTime(leaveTime, 'RELATIVE')})`;
 
-		const description = `Name: ${guild.name} (${guild.id})\nOwner: ${
-			owner?.username
-		} (${owner?.id})\nMembers: ${guild.memberCount}\nTotal Guilds: ${client.guilds.cache.size}\nCreate: ${detailedTime(
-			guild.members.me?.joinedAt || new Date()
-		)}\nRemove: ${detailedTime(new Date())}
-    `;
-
-		const embeds = [
-			new EmbedBuilder()
+			const embed = new EmbedBuilder()
 				.setColor('Red')
 				.setDescription(description)
 				.setAuthor({
@@ -34,12 +37,15 @@ export const event = {
 					iconURL: guild.iconURL() ?? undefined,
 				})
 				.setThumbnail(guild.iconURL() ?? null)
-				.setTimestamp(),
-		];
+				.setTimestamp();
 
-		const username = 'Guild Delete';
-		const avatarURL = guild.client.user.displayAvatarURL();
-
-		webhook.send({ embeds, username, avatarURL }).catch(console.error);
+			await webhook.send({
+				embeds: [embed],
+				username: 'Guild Delete',
+				avatarURL: client.user?.displayAvatarURL(),
+			});
+		} catch (error) {
+			Logger.error(`Failed to send guild delete webhook: ${error}`);
+		}
 	},
 };

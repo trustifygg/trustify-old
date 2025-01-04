@@ -62,15 +62,11 @@ export async function handleUsefulButton(interaction: ButtonInteraction, guild: 
 
 	await review.save();
 
-	const row = new ActionRowBuilder<ButtonBuilder>()
-
+	const row = new ActionRowBuilder<ButtonBuilder>();
 
 	if (guild.reviewButton) {
 		row.addComponents(
-			new ButtonBuilder()
-				.setCustomId("submit_review")
-				.setLabel("Submit Review")
-				.setStyle(ButtonStyle.Primary)
+			new ButtonBuilder().setCustomId('submit_review').setLabel('Submit Review').setStyle(ButtonStyle.Primary)
 		);
 	}
 
@@ -79,11 +75,10 @@ export async function handleUsefulButton(interaction: ButtonInteraction, guild: 
 			new ButtonBuilder()
 				.setCustomId(`useful_${reviewId}`)
 				.setLabel(`Useful (${review.useful!.count})`)
-				.setEmoji("👍")
+				.setEmoji('👍')
 				.setStyle(ButtonStyle.Secondary)
 		);
 	}
-	
 
 	await interaction.update({ components: [row] });
 }

@@ -9,7 +9,7 @@ import { Logger } from './logger';
 import { DEFAULT_EMBED_COLOR } from '../constants';
 
 const webhookClient = new WebhookClient({
-	url: 'https://discord.com/api/webhooks/1200806176850464808/siR8_iUsZQ58JG8cGrcJ96f0eXrTHRHcJqL1nWAsw9W8st5COMLGh-TIwFRrXwtwvnco',
+	url: Bun.env.COMMANDS_WEBHOOK_URL!,
 });
 
 export const sendWebhookLog = async (interaction: Interaction, type: 'command' | 'modal' | 'button') => {
