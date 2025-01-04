@@ -28,6 +28,8 @@ const client = new Client({
 	shardCount: getInfo().TOTAL_SHARDS,
 }) as ExtendedClient;
 
+export default client;
+
 client.cluster = new ClusterClient(client);
 
 client.commands = new Collection();
