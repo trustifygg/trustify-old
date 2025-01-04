@@ -2,10 +2,10 @@
 export const DEFAULT_EMBED_COLOR = 0x5865f2;
 
 // Emojis
-export const STAR_EMPTY = '<:starempty:1324131747851665489>';
-export const STAR_RED = '<:starred:1324131708043395105>';
-export const STAR_YELLOW = '<:staryellow:1324131656843395155>';
-export const STAR_GREEN = '<:greenstar:1324131592808960090>';
+export const STAR_EMPTY = '<:starempty:1324947847258439790>';
+export const STAR_RED = '<:starred:1324947894452621425>';
+export const STAR_YELLOW = '<:staryellow:1324947914832740445>';
+export const STAR_GREEN = '<:greenstar:1324947941269442636>';
 export const STAR_EMOJI = '⭐';
 
 // Max values
