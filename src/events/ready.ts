@@ -3,6 +3,7 @@ import { Logger } from '../utils/logger';
 import { reviewModel } from '../models/review';
 import fs from 'fs';
 import path from 'path';
+import { BOT_TAGLINE } from '../constants';
 
 export const event = {
 	name: Events.ClientReady,
@@ -18,8 +19,8 @@ export const event = {
 		const statuses = [
 			{
 				type: ActivityType.Custom,
-				name: '💙 Simplifying reviews',
-				state: '💙 Simplifying reviews',
+				name: `💙 ${BOT_TAGLINE}`,
+				state: `💙 ${BOT_TAGLINE}`,
 			},
 			{
 				type: ActivityType.Watching,

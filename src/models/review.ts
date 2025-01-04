@@ -18,6 +18,7 @@ const reviewSchema = new mongoose.Schema({
 	messageId: {
 		type: String,
 		unique: true,
+		sparse: true,
 	},
 	threadId: { type: String, required: false },
 	review: {

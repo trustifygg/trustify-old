@@ -62,7 +62,7 @@ export async function handleUsefulButton(interaction: ButtonInteraction) {
 	await review.save();
 
 	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-		new ButtonBuilder().setCustomId('submit_review').setLabel('Submit Review').setStyle(ButtonStyle.Success),
+		new ButtonBuilder().setCustomId('submit_review').setLabel('Submit Review').setStyle(ButtonStyle.Primary),
 		new ButtonBuilder()
 			.setCustomId(`useful_${reviewId}`)
 			.setLabel(`Useful (${review.useful!.count})`)

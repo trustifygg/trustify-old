@@ -191,7 +191,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 				.setThumbnail(interaction.client.user?.displayAvatarURL() ?? undefined);
 
 			const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-				new ButtonBuilder().setCustomId('submit_review').setLabel('Submit Review').setStyle(ButtonStyle.Success)
+				new ButtonBuilder().setCustomId('submit_review').setLabel('Submit Review').setStyle(ButtonStyle.Primary)
 			);
 
 			await channel.send({

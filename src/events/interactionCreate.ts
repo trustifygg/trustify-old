@@ -3,12 +3,15 @@ import { createReviewModal, handleUsefulButton } from '../components/reviewButto
 import { requireSetup } from '../utils/checkSetup';
 import type { ExtendedClient } from '../main';
 import { Logger } from '../utils/logger';
+import { sendWebhookLog } from '../utils/webhook';
 
 export const event = {
 	name: Events.InteractionCreate,
 	once: false,
 	async execute(interaction: Interaction, client: ExtendedClient) {
 		if (interaction.isChatInputCommand()) {
+			await sendWebhookLog(interaction, 'command');
+
 			const command = client.commands.get(interaction.commandName);
 			if (!command) return;
 
@@ -30,9 +33,11 @@ export const event = {
 
 		// Handle button clicks
 		else if (interaction.isButton()) {
+			await sendWebhookLog(interaction, 'button');
+
 			if (interaction.customId !== 'submit_review' && !(await requireSetup(interaction as any))) return;
 
-			if (interaction.customId === 'submit_review') {
+			if (interaction.customId === 'submit_review' || interaction.customId === 'writeReview') {
 				const modal = createReviewModal();
 				await interaction.showModal(modal);
 			} else if (interaction.customId.startsWith('useful_')) {
@@ -42,6 +47,8 @@ export const event = {
 
 		// Handle modal submissions
 		else if (interaction.isModalSubmit() && interaction.customId === 'review_modal') {
+			await sendWebhookLog(interaction, 'modal');
+
 			const reviewContent = interaction.fields.getTextInputValue('review_content');
 			const rating = parseInt(interaction.fields.getTextInputValue('review_rating'));
 
