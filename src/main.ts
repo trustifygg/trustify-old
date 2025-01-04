@@ -4,8 +4,6 @@ import { connectToDatabase } from './config/mongodb';
 import fs from 'fs';
 import path from 'path';
 import { setClient } from './events/reviewLog';
-import { Logger } from './utils/logger';
-
 import { ClusterClient, getInfo } from 'discord-hybrid-sharding';
 
 config();
@@ -27,8 +25,6 @@ const client = new Client({
 	shards: getInfo().SHARD_LIST,
 	shardCount: getInfo().TOTAL_SHARDS,
 }) as ExtendedClient;
-
-export default client;
 
 client.cluster = new ClusterClient(client);
 
@@ -64,4 +60,5 @@ for (const file of eventFiles) {
 }
 
 setClient(client);
+
 void client.login(Bun.env.DISCORD_TOKEN);
