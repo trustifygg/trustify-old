@@ -3,9 +3,8 @@ import { userModel } from '../../models/users';
 import { authenticate } from '../middlewares/authMiddlewares';
 import { getBotGuilds, getUserGuilds } from '../../utils/discord';
 import { refreshUserTokens } from '../../utils/auth';
-import type { Variables } from '../..';
+import { manager, type Variables } from '../..';
 import { Logger } from '../../utils/logger';
-import client from '../../main';
 
 const usersRoute = new Hono<{ Variables: Variables }>();
 
@@ -54,7 +53,7 @@ usersRoute.get('/@me/guilds', authenticate, async (c) => {
 				return (permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
 			});
 
-			const botGuilds = client.guilds.cache;
+			const botGuilds = (await manager.broadcastEval((client) => client.guilds.cache)).flat();
 			const botGuildIds = new Set(botGuilds.map((guild) => guild.id));
 
 			const guildsRes = managedGuilds.map((guild) => ({
@@ -77,7 +76,7 @@ usersRoute.get('/@me/guilds', authenticate, async (c) => {
 						return (permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
 					});
 
-					const botGuilds = await getBotGuilds(Bun.env.DISCORD_BOT_TOKEN!);
+					const botGuilds = (await manager.broadcastEval((client) => client.guilds.cache)).flat();
 					const botGuildIds = new Set(botGuilds.map((guild) => guild.id));
 
 					const guildsRes = managedGuilds.map((guild) => ({
