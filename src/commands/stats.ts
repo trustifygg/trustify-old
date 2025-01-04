@@ -28,18 +28,27 @@ function getProgressBar(percentage: number): string {
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
-		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
+		return interaction.reply({
+			content: ERRORS.GUILD_ONLY,
+			flags: ['Ephemeral'],
+		});
 	}
 
 	const guild = await guildModel.findOne({ guildId: currentGuild.id });
 	if (!guild) {
-		return interaction.reply({ content: ERRORS.NEEDS_SETUP, flags: ['Ephemeral'] });
+		return interaction.reply({
+			content: ERRORS.NEEDS_SETUP,
+			flags: ['Ephemeral'],
+		});
 	}
 
 	// Get all reviews
 	const reviews = await reviewModel.find({ guildId: currentGuild.id }).sort({ createdAt: -1 });
 	if (!reviews.length) {
-		return interaction.reply({ content: 'No reviews found for this server.', flags: ['Ephemeral'] });
+		return interaction.reply({
+			content: 'No reviews found for this server.',
+			flags: ['Ephemeral'],
+		});
 	}
 
 	// Calculate statistics
@@ -62,7 +71,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			iconURL: currentGuild.iconURL() ?? undefined,
 		})
 		.setDescription(
-			`Total Reviews: ${totalReviews} • Average Rating: ${averageRating.toFixed(1)} ${getStarsDisplay(Math.round(averageRating))}`
+			`Total Reviews: ${totalReviews}\nAverage Rating: ${averageRating.toFixed(
+				1
+			)} ${getStarsDisplay(Math.round(averageRating))}`
 		)
 		.addFields(
 			{
@@ -70,7 +81,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 				value: distribution
 					.map((count, index) => {
 						const percentage = (count / totalReviews) * 100;
-						return `${getStarsDisplay(5 - index)} ${getProgressBar(percentage)} ${percentage.toFixed(1).padStart(5)}% (${count.toString().padStart(2)})`;
+						return `${getStarsDisplay(5 - index)} ${getProgressBar(
+							percentage
+						)} ${percentage.toFixed(1).padStart(5)}% (${count.toString().padStart(2)})`;
 					})
 					.join('\n'),
 				inline: false,
@@ -86,7 +99,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			}
 		)
 		.setFooter({
-			text: guild.customEmbed?.footer?.text || DEFAULT_FOOTER,
+			text: DEFAULT_FOOTER,
 			iconURL: interaction.client.user?.displayAvatarURL() ?? undefined,
 		});
 

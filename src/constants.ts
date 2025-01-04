@@ -15,11 +15,11 @@ export const MAX_REVIEW_ROLES = 5;
 // Text constants
 export const BOT_NAME = 'Trustify';
 export const BOT_VERSION = '2.0.0';
-export const BOT_TAGLINE = 'Simplifying reviews';
+export const BOT_TAGLINE = 'Building trust in communities';
 export const DEFAULT_REVIEW_TITLE = 'New Review';
 export const DEVELOPERS = [
-	{ name: 'Blaxedev', id: '918585597021548575' },
 	{ name: 'Solusdev', id: '953834900870557768' },
+	{ name: 'Blaxedev', id: '918585597021548575' },
 ] as const;
 export const DEFAULT_FOOTER = `${BOT_NAME} - ${BOT_TAGLINE}`;
 

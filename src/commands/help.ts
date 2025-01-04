@@ -17,7 +17,10 @@ export const data = new SlashCommandBuilder().setName('help').setDescription('Vi
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
-		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
+		return interaction.reply({
+			content: ERRORS.GUILD_ONLY,
+			flags: ['Ephemeral'],
+		});
 	}
 
 	// Load all commands
@@ -47,10 +50,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 	const embed = new EmbedBuilder()
 		.setColor(DEFAULT_EMBED_COLOR)
-		.setAuthor({
-			name: `${BOT_NAME}'s Help Menu`,
-			iconURL: interaction.client?.user?.displayAvatarURL() ?? undefined,
-		})
+		.setTitle('Help Menu')
 		.setDescription(`Here's a list of ${BOT_NAME}'s commands:`)
 		.setThumbnail(interaction.client?.user?.displayAvatarURL() ?? undefined)
 		.addFields(
@@ -71,8 +71,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		});
 
 	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-		new ButtonBuilder().setLabel('Invite Me').setURL('https://google.com').setStyle(ButtonStyle.Link),
-		new ButtonBuilder().setLabel('Support Server').setURL('https://google.com').setStyle(ButtonStyle.Link)
+		new ButtonBuilder().setLabel('Invite Me').setURL('https://www.trustify.gg/invite').setStyle(ButtonStyle.Link),
+		new ButtonBuilder().setLabel('Support Server').setURL('https://www.trustify.gg/support').setStyle(ButtonStyle.Link)
 	);
 
 	return interaction.reply({
