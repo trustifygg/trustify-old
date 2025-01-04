@@ -40,6 +40,9 @@ import { MongoStore } from './utils/mongoStore';
 import { connectToDatabase } from './config/mongodb';
 import { config } from 'dotenv';
 
+config();
+connectToDatabase();
+
 export type Variables = {
 	user?: IUser;
 	session: SessionData;
@@ -47,9 +50,6 @@ export type Variables = {
 
 const app = new Hono<{ Variables: Variables }>().basePath('/v1');
 const PORT = Bun.env.PORT || 5000;
-
-config();
-connectToDatabase();
 
 app
 	.use(logger())
@@ -84,10 +84,7 @@ app
 				domain: process.env.NODE_ENV === 'production' ? process.env.WEBSITE_URL : undefined,
 			},
 		})
-	)
-	.get('/', (c) => c.json('Bonjour le monde!'))
-	.onError(errorHandler)
-	.notFound(notFoundHandler);
+	);
 
 const routesPath = path.join(__dirname, 'api', 'routes');
 const routeFiles = readdirSync(routesPath).filter((file) => file.endsWith('.ts'));
@@ -98,6 +95,11 @@ routeFiles.forEach((file) => {
 	app.route(routeName, router);
 	Logger.info(`Route loaded: ${routeName}`);
 });
+
+app.get('/', (c) => c.json('Bonjour le monde!'));
+
+app.onError(errorHandler);
+app.notFound(notFoundHandler);
 
 manager
 	.spawn({ timeout: 10 * 1000 })

@@ -1,8 +1,8 @@
+import { authenticate } from '../middlewares/authMiddlewares';
 import { Hono } from 'hono';
 import { sign } from 'hono/jwt';
 import { deleteCookie, setCookie } from 'hono/cookie';
 import { exchangeCode, getUserData } from '../../utils/discord';
-import { authenticate } from '../middlewares/authMiddlewares';
 import { type IUser, userModel } from '../../models/users';
 import type { Variables } from '../..';
 import type { CookieOptions } from 'hono/utils/cookie';
@@ -100,12 +100,19 @@ authRoute.get('/callback', async (c) => {
 	}
 });
 
-authRoute.get('/logout', authenticate, (c) => {
+authRoute.get('/logout', (c) => {
 	try {
-		c.set('session', { user: undefined });
-		deleteCookie(c, 'token');
-		c.redirect(Bun.env.WEBSITE_URL!);
-		return c.json({ message: 'Logged out successfully' });
+		const user = c.get('user');
+		const sessionUser = c.get('session')?.user;
+
+		if (user || sessionUser) {
+			c.set('session', { user: undefined });
+			deleteCookie(c, 'token');
+			c.redirect(Bun.env.WEBSITE_URL!);
+			return c.json({ message: 'Logged out successfully' }, 200);
+		} else {
+			return c.json({ message: 'Not logged in' }, 401);
+		}
 	} catch (err) {
 		Logger.error('Logout error:' + err);
 		return c.json({ message: 'Logout failed' }, 500);
