@@ -4,11 +4,14 @@ import { requireSetup } from '../utils/checkSetup';
 import type { ExtendedClient } from '../main';
 import { Logger } from '../utils/logger';
 import { sendWebhookLog } from '../utils/webhook';
+import { guildModel, type IGuild } from '../models/guild';
 
 export const event = {
 	name: Events.InteractionCreate,
 	once: false,
 	async execute(interaction: Interaction, client: ExtendedClient) {
+		const guildData = await guildModel.findOne({ guildId: interaction.guildId }) as IGuild;
+
 		if (interaction.isChatInputCommand()) {
 			await sendWebhookLog(interaction, 'command');
 
@@ -41,7 +44,7 @@ export const event = {
 				const modal = createReviewModal();
 				await interaction.showModal(modal);
 			} else if (interaction.customId.startsWith('useful_')) {
-				await handleUsefulButton(interaction);
+				await handleUsefulButton(interaction, guildData);
 			}
 		}
 

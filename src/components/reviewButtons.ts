@@ -8,6 +8,7 @@ import {
 	ButtonInteraction,
 } from 'discord.js';
 import { reviewModel } from '../models/review';
+import type { IGuild } from '../models/guild';
 
 export function createReviewModal() {
 	const modal = new ModalBuilder().setCustomId('review_modal').setTitle('Submit a Review');
@@ -37,7 +38,7 @@ export function createReviewModal() {
 	return modal;
 }
 
-export async function handleUsefulButton(interaction: ButtonInteraction) {
+export async function handleUsefulButton(interaction: ButtonInteraction, guild: IGuild) {
 	const reviewId = interaction.customId.split('_')[1];
 	const review = await reviewModel.findOne({ reviewId });
 
@@ -61,14 +62,28 @@ export async function handleUsefulButton(interaction: ButtonInteraction) {
 
 	await review.save();
 
-	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-		new ButtonBuilder().setCustomId('submit_review').setLabel('Submit Review').setStyle(ButtonStyle.Primary),
-		new ButtonBuilder()
-			.setCustomId(`useful_${reviewId}`)
-			.setLabel(`Useful (${review.useful!.count})`)
-			.setEmoji('👍')
-			.setStyle(ButtonStyle.Secondary)
-	);
+	const row = new ActionRowBuilder<ButtonBuilder>()
+
+
+	if (guild.reviewButton) {
+		row.addComponents(
+			new ButtonBuilder()
+				.setCustomId("submit_review")
+				.setLabel("Submit Review")
+				.setStyle(ButtonStyle.Primary)
+		);
+	}
+
+	if (guild.usefulButton) {
+		row.addComponents(
+			new ButtonBuilder()
+				.setCustomId(`useful_${reviewId}`)
+				.setLabel(`Useful (${review.useful!.count})`)
+				.setEmoji("👍")
+				.setStyle(ButtonStyle.Secondary)
+		);
+	}
+	
 
 	await interaction.update({ components: [row] });
 }
