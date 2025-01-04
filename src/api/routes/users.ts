@@ -47,13 +47,22 @@ usersRoute.get('/@me/guilds', authenticate, async (c) => {
 		try {
 			const guilds = await getUserGuilds(user.accessToken);
 
-			const MANAGE_GUILD_PERMISSION = BigInt(1) << BigInt(5);
+			const MANAGE_GUILD_PERMISSION = 0x20;
 			const managedGuilds = guilds.filter((guild) => {
-				const permissions = BigInt(guild.permissions);
-				return (permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
+				const permissions = typeof guild.permissions === 'string' 
+					? BigInt(guild.permissions) 
+					: guild.permissions;
+				return Boolean(permissions & BigInt(MANAGE_GUILD_PERMISSION));
 			});
 
-			const botGuilds = (await manager.broadcastEval((client) => client.guilds.cache)).flat();
+			const botGuilds = (await manager.broadcastEval((client) => 
+				client.guilds.cache.map(g => ({
+					id: g.id,
+					name: g.name,
+					icon: g.icon
+				}))
+			)).flat();
+			
 			const botGuildIds = new Set(botGuilds.map((guild) => guild.id));
 
 			const guildsRes = managedGuilds.map((guild) => ({
@@ -70,13 +79,22 @@ usersRoute.get('/@me/guilds', authenticate, async (c) => {
 					const { user: refreshedUser } = await refreshUserTokens(user, c);
 					const guilds = await getUserGuilds(refreshedUser.accessToken);
 
-					const MANAGE_GUILD_PERMISSION = BigInt(1) << BigInt(5);
+					const MANAGE_GUILD_PERMISSION = 0x20;
 					const managedGuilds = guilds.filter((guild) => {
-						const permissions = BigInt(guild.permissions);
-						return (permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
+						const permissions = typeof guild.permissions === 'string' 
+							? BigInt(guild.permissions) 
+							: guild.permissions;
+						return Boolean(permissions & BigInt(MANAGE_GUILD_PERMISSION));
 					});
 
-					const botGuilds = (await manager.broadcastEval((client) => client.guilds.cache)).flat();
+					const botGuilds = (await manager.broadcastEval((client) => 
+						client.guilds.cache.map(g => ({
+							id: g.id,
+							name: g.name,
+							icon: g.icon
+						}))
+					)).flat();
+					
 					const botGuildIds = new Set(botGuilds.map((guild) => guild.id));
 
 					const guildsRes = managedGuilds.map((guild) => ({

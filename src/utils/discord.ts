@@ -46,34 +46,19 @@ export const getUserData = async (accessToken: string): Promise<DiscordUser> => 
 	return response.json() as Promise<DiscordUser>;
 };
 
-export const getUserGuilds = async (accessToken: string): Promise<DiscordGuild[]> => {
-	const response = await fetch(`${DISCORD_API_URL}/users/@me/guilds`, {
+export async function getUserGuilds(accessToken: string) {
+	const response = await fetch('https://discord.com/api/v10/users/@me/guilds', {
 		headers: {
 			Authorization: `Bearer ${accessToken}`,
 		},
 	});
 
 	if (!response.ok) {
-		const errorData = await response.json().catch(() => null);
-		Logger.error(
-			'Discord API Error:' +
-				JSON.stringify({
-					status: response.status,
-					statusText: response.statusText,
-					error: errorData,
-				})
-		);
-
-		if (response.status === 401) {
-			throw new Error('Discord token expired or invalid');
-		}
-
-		throw new Error(`Failed to fetch user guilds: ${response.statusText}`);
+		throw new Error(`HTTP error! status: ${response.status}`);
 	}
 
-	const guilds = await response.json();
-	return guilds;
-};
+	return await response.json();
+}
 
 export const getBotGuilds = async (botToken: string): Promise<DiscordGuild[]> => {
 	const response = await fetch(`${DISCORD_API_URL}/users/@me/guilds`, {
