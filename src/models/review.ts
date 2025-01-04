@@ -9,6 +9,7 @@ const reviewSchema = new mongoose.Schema({
 	reviewId: {
 		type: String,
 		required: true,
+		unique: true,
 	},
 	authorId: {
 		type: String,
@@ -16,6 +17,7 @@ const reviewSchema = new mongoose.Schema({
 	},
 	messageId: {
 		type: String,
+		unique: true,
 	},
 	threadId: { type: String, required: false },
 	review: {
