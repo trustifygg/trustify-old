@@ -10,6 +10,7 @@ const client = DiscordClient.getInstance();
 
 statsRoute.get('/', async (c) => {
 	try {
+		// Get MongoDB stats
 		const reviewStats = await reviewModel.aggregate([
 			{
 				$group: {
@@ -24,64 +25,31 @@ statsRoute.get('/', async (c) => {
 			},
 		]);
 
-		const discordClient = await client.getClient();
+		// Get stats from all shards
+		const shardStats = await manager.broadcastEval(async (client) => {
+			return {
+				guildCount: client.guilds.cache.size,
+				memberCount: client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0),
+			};
+		});
 
-		const guildCount = discordClient.guilds.cache.size;
-		const totalMembers = discordClient.guilds.cache.size;
-
-		const ratingsDistribution = await reviewModel.aggregate([
-			{
-				$group: {
-					_id: '$rating',
-					count: { $sum: 1 },
-				},
-			},
-			{ $sort: { _id: 1 } },
-		]);
-
-		const sixMonthsAgo = new Date();
-		sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-		const reviewsOverTime = await reviewModel.aggregate([
-			{
-				$match: {
-					createdAt: { $gte: sixMonthsAgo },
-				},
-			},
-			{
-				$group: {
-					_id: {
-						year: { $year: '$createdAt' },
-						month: { $month: '$createdAt' },
-					},
-					count: { $sum: 1 },
-				},
-			},
-			{ $sort: { '_id.year': 1, '_id.month': 1 } },
-		]);
+		// Aggregate shard stats
+		const totalGuilds = shardStats.reduce((acc, curr) => acc + curr.guildCount, 0);
+		const totalMembers = shardStats.reduce((acc, curr) => acc + curr.memberCount, 0);
 
 		const stats = {
 			overview: {
 				totalReviews: reviewStats[0]?.totalReviews || 0,
 				averageRating: Number(reviewStats[0]?.averageRating?.toFixed(2)) || 0,
-				totalGuilds: guildCount,
+				totalGuilds,
 				totalMembers,
 				totalUsefulVotes: reviewStats[0]?.totalUsefulVotes || 0,
 				anonymousReviews: reviewStats[0]?.anonymousReviews || 0,
 			},
-			ratingsDistribution: ratingsDistribution.reduce(
-				(acc, curr) => {
-					acc[curr._id] = curr.count;
-					return acc;
-				},
-				{} as Record<number, number>
-			),
-			reviewsOverTime: reviewsOverTime.map((item) => ({
-				date: `${item._id.year}-${String(item._id.month).padStart(2, '0')}`,
-				count: item.count,
-			})),
 		};
 
+		// Cache headers for better performance
+		c.header('Cache-Control', 'public, max-age=60'); // Cache for 1 minute
 		return c.json(stats, 200);
 	} catch (error) {
 		Logger.error('Error fetching stats:' + error);

@@ -26,7 +26,8 @@ export const sendWebhookLog = async (interaction: Interaction, type: 'command' |
 			.addFields(
 				{ name: 'User', value: `${user.username} (${user.id})`, inline: true },
 				{ name: 'Server', value: guild ? `${guild.name} (${guild.id})` : 'DM', inline: true }
-			);
+			)
+			.setThumbnail(guild?.iconURL() || null);
 
 		if (interaction.isChatInputCommand()) {
 			const options = getCommandOptions(interaction);

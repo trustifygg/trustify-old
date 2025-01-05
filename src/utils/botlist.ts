@@ -2,7 +2,7 @@ import { setInterval } from 'node:timers';
 import { Time } from '@imranbarbhuiya/duration';
 import { request } from 'undici';
 import { Logger } from './logger';
-import {type  ClusterManager } from 'discord-hybrid-sharding';
+import { type ClusterManager } from 'discord-hybrid-sharding';
 
 export const postToTopGG = async (body: { server_count: number; shard_count?: number; shard_id?: number }) => {
 	const url = 'https://top.gg/api/bots/stats';

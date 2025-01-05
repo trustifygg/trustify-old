@@ -5,6 +5,7 @@ import { getBotGuilds, getUserGuilds } from '../../utils/discord';
 import { refreshUserTokens } from '../../utils/auth';
 import { manager, type Variables } from '../..';
 import { Logger } from '../../utils/logger';
+import type { DiscordGuild } from '../../types/discord';
 
 const usersRoute = new Hono<{ Variables: Variables }>();
 
@@ -47,25 +48,30 @@ usersRoute.get('/@me/guilds', authenticate, async (c) => {
 		try {
 			const guilds = await getUserGuilds(user.accessToken);
 
-			const MANAGE_GUILD_PERMISSION = 0x20;
-			const managedGuilds = guilds.filter((guild) => {
-				const permissions = typeof guild.permissions === 'string' 
-					? BigInt(guild.permissions) 
-					: guild.permissions;
-				return Boolean(permissions & BigInt(MANAGE_GUILD_PERMISSION));
+			const MANAGE_GUILD_PERMISSION = BigInt(0x20);
+			const ADMINISTRATOR_PERMISSION = BigInt(0x8);
+
+			const managedGuilds = guilds.filter((guild: DiscordGuild) => {
+				const permissions = BigInt(guild.permissions);
+				return Boolean(
+					(permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION ||
+						(permissions & ADMINISTRATOR_PERMISSION) === ADMINISTRATOR_PERMISSION
+				);
 			});
 
-			const botGuilds = (await manager.broadcastEval((client) => 
-				client.guilds.cache.map(g => ({
-					id: g.id,
-					name: g.name,
-					icon: g.icon
-				}))
-			)).flat();
-			
+			const botGuilds = (
+				await manager.broadcastEval((client) =>
+					client.guilds.cache.map((g) => ({
+						id: g.id,
+						name: g.name,
+						icon: g.icon,
+					}))
+				)
+			).flat();
+
 			const botGuildIds = new Set(botGuilds.map((guild) => guild.id));
 
-			const guildsRes = managedGuilds.map((guild) => ({
+			const guildsRes = managedGuilds.map((guild: DiscordGuild) => ({
 				id: guild.id,
 				name: guild.name,
 				icon: guild.icon,
@@ -79,25 +85,30 @@ usersRoute.get('/@me/guilds', authenticate, async (c) => {
 					const { user: refreshedUser } = await refreshUserTokens(user, c);
 					const guilds = await getUserGuilds(refreshedUser.accessToken);
 
-					const MANAGE_GUILD_PERMISSION = 0x20;
-					const managedGuilds = guilds.filter((guild) => {
-						const permissions = typeof guild.permissions === 'string' 
-							? BigInt(guild.permissions) 
-							: guild.permissions;
-						return Boolean(permissions & BigInt(MANAGE_GUILD_PERMISSION));
+					const MANAGE_GUILD_PERMISSION = BigInt(0x20);
+					const ADMINISTRATOR_PERMISSION = BigInt(0x8);
+
+					const managedGuilds = guilds.filter((guild: DiscordGuild) => {
+						const permissions = BigInt(guild.permissions);
+						return Boolean(
+							(permissions & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION ||
+								(permissions & ADMINISTRATOR_PERMISSION) === ADMINISTRATOR_PERMISSION
+						);
 					});
 
-					const botGuilds = (await manager.broadcastEval((client) => 
-						client.guilds.cache.map(g => ({
-							id: g.id,
-							name: g.name,
-							icon: g.icon
-						}))
-					)).flat();
-					
+					const botGuilds = (
+						await manager.broadcastEval((client) =>
+							client.guilds.cache.map((g) => ({
+								id: g.id,
+								name: g.name,
+								icon: g.icon,
+							}))
+						)
+					).flat();
+
 					const botGuildIds = new Set(botGuilds.map((guild) => guild.id));
 
-					const guildsRes = managedGuilds.map((guild) => ({
+					const guildsRes = managedGuilds.map((guild: DiscordGuild) => ({
 						id: guild.id,
 						name: guild.name,
 						icon: guild.icon,

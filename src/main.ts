@@ -85,6 +85,6 @@ process.on('uncaughtExceptionMonitor', (error) => {
 	verifyAndSend(error, 'Uncaught Exception Monitor');
 });
 
-setClient(client)
+setClient(client);
 
 void client.login(Bun.env.DISCORD_TOKEN);
