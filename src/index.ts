@@ -3,19 +3,25 @@ import { Logger } from './utils/logger';
 
 const isProduction = Bun.env.NODE_ENV === 'production';
 
+const startupOptions = !isProduction ? {
+	totalShards: 1, shardsPerClusters: 1
+} : { totalShards: 2, shardsPerClusters: 2 }
+
 export const manager = new ClusterManager('./src/main.ts', {
-	totalShards: 2,
-	shardsPerClusters: 8,
+	...startupOptions,
 	mode: 'worker',
 	token: Bun.env.DISCORD_TOKEN,
 });
 
 manager.on('clusterCreate', (cluster) => {
-	Logger.info(`[cluster] Cluster ${cluster.id} created`);
-	cluster.on('spawn', () => Logger.info(`[cluster] Cluster ${cluster.id} has spawned`));
-	cluster.on('death', () => Logger.warn(`[cluster] Cluster${cluster.id} has died`));
+	Logger.info(`[CLUSTER] Cluster ${cluster.id} created`);
+	cluster.on('spawn', () => Logger.info(`[CLUSTER] Cluster ${cluster.id} has spawned`));
+	cluster.on('death', () => Logger.warn(`[CLUSTER] Cluster${cluster.id} has died`));
 	cluster.on('error', (err) => Logger.error(err.message));
+	
 });
+
+manager.on('debug', (info) => Logger.debug(`[SHARD_MANAGER] ${info}`));
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
@@ -87,7 +93,7 @@ routeFiles.forEach((file) => {
 	const routeName = file.split('.')[0];
 	const router = require(path.join(routesPath, file)).default;
 	app.route(routeName, router);
-	Logger.info(`Route loaded: ${routeName}`);
+	Logger.info(`[API] Route loaded: ${routeName}`);
 });
 
 app.get('/', (c) => c.json('Bonjour le monde!'));

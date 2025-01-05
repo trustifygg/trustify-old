@@ -107,9 +107,11 @@ authRoute.get('/logout', (c) => {
 
 		if (user || sessionUser) {
 			c.set('session', { user: undefined });
-			deleteCookie(c, 'token');
-			c.redirect(Bun.env.WEBSITE_URL!);
-			return c.json({ message: 'Logged out successfully' }, 200);
+			deleteCookie(c, 'token', {
+				...JWT_COOKIE_OPTIONS,
+				path: '/',
+			});
+			return c.redirect(Bun.env.WEBSITE_URL!);
 		} else {
 			return c.json({ message: 'Not logged in' }, 401);
 		}
