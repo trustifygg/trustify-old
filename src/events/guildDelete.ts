@@ -1,47 +1,58 @@
-import { EmbedBuilder, Events, WebhookClient, type DateResolvable, type Guild } from 'discord.js';
-import type { ExtendedClient } from '../main';
-import { getDynamicTime } from '../utils/getDynamicTime';
-import { guildModel } from '../models/guild';
-import { Logger } from '../utils/logger';
+import {
+	EmbedBuilder,
+	Events,
+	WebhookClient,
+	type DateResolvable,
+	type Guild,
+} from "discord.js";
+import type { ExtendedClient } from "../main";
+import { getDynamicTime } from "../utils/getDynamicTime";
+import { guildModel } from "../models/guild";
+import { Logger } from "../utils/logger";
 
 export const event = {
 	name: Events.GuildDelete,
 	once: false,
 	execute: async (guild: Guild, client: ExtendedClient) => {
-		const existingGuild = await guildModel.findOne({ guildId: guild.id });
-		if (!existingGuild) {
-			return;
-		}
-
-		await guildModel.deleteOne({ guildId: guild.id });
-
 		try {
+			// If guild not found, return
+			if (!guild) return;
+
+			// Delete guild data
+			await guildModel.deleteOne({ guildId: guild.id });
+
+			// Send webhook
 			const webhook = new WebhookClient({
 				url: Bun.env.GUILD_WEBHOOK_URL!,
 			});
 
-			const owner = client.users.cache.get(guild.ownerId);
+			const owner = await client.users.fetch(guild.ownerId);
 			const leaveTime = new Date();
 
-			const description = `Name: ${guild.name} (${guild.id})
-Owner: ${owner?.username ?? 'Unknown'} (${owner?.id ?? 'Unknown'})
-Members: ${guild.memberCount}
-Total Guilds: ${client.guilds.cache.size}
-Left: ${getDynamicTime(leaveTime, 'LONG_TIME_AND_DATE')} (${getDynamicTime(leaveTime, 'RELATIVE')})`;
+			const description = `Name: ${guild.name} (${guild.id})\nOwner: ${
+				owner.username ?? "Unknown"
+			} (${owner.id ?? "Unknown"})\nMembers: ${
+				guild.memberCount
+			}\nTotal Guilds: ${client.guilds.cache.size}\nLeft: ${getDynamicTime(
+				leaveTime,
+				"LONG_TIME_AND_DATE"
+			)} (${getDynamicTime(leaveTime, "RELATIVE")})`;
 
 			const embed = new EmbedBuilder()
-				.setColor('Red')
-				.setDescription(description)
+				.setColor("Red")
 				.setAuthor({
-					name: guild.name || 'Unknown Server',
+					name: guild.name || "Unknown Server",
 					iconURL: guild.iconURL() ?? undefined,
 				})
+				.setTitle("Guild Deleted")
+				.setDescription(description)
+
 				.setThumbnail(guild.iconURL() ?? null)
 				.setTimestamp();
 
 			await webhook.send({
 				embeds: [embed],
-				username: 'Guild Delete',
+				username: "Guild Delete",
 				avatarURL: client.user?.displayAvatarURL(),
 			});
 		} catch (error) {
