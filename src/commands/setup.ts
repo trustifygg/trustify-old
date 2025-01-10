@@ -7,90 +7,148 @@ import {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
-} from 'discord.js';
-import { guildModel } from '../models/guild';
-import { DEFAULT_EMBED_COLOR, DEFAULT_FOOTER, ERRORS, BOT_NAME } from '../constants';
-import { logReview } from '../events/reviewLog';
+	ApplicationIntegrationType,
+} from "discord.js";
+import { guildModel } from "../models/guild";
+import {
+	DEFAULT_EMBED_COLOR,
+	DEFAULT_FOOTER,
+	ERRORS,
+	BOT_NAME,
+} from "../constants";
+import { logReview } from "../events/reviewLog";
 
 export const data = new SlashCommandBuilder()
-	.setName('setup')
-	.setDescription('Setup server review settings')
+	.setName("setup")
+	.setDescription("Setup server review settings")
 	.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+	.setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
 	.addChannelOption((option) =>
-		option.setName('review_channel').setDescription('Channel for reviews').setRequired(true)
-	)
-	.addChannelOption((option) =>
-		option.setName('logs_channel').setDescription('Channel for review logs').setRequired(true)
-	)
-	.addBooleanOption((option) => option.setName('review_button').setDescription('Show review button').setRequired(true))
-	.addBooleanOption((option) =>
-		option.setName('useful_button').setDescription('Show useful button on reviews').setRequired(true)
-	)
-	.addRoleOption((option) =>
-		option.setName('admin_role').setDescription('Role that can manage reviews').setRequired(true)
-	)
-	.addBooleanOption((option) =>
-		option.setName('create_threads').setDescription('Create discussion threads for reviews').setRequired(false)
-	)
-	.addStringOption((option) =>
 		option
-			.setName('review_title')
-			.setDescription('Custom title for reviews (e.g., "New Review", "Feedback")')
+			.setName("review_channel")
+			.setDescription("Channel for reviews")
+			.setRequired(true)
+	)
+	.addChannelOption((option) =>
+		option
+			.setName("logs_channel")
+			.setDescription("Channel for review logs")
+			.setRequired(true)
+	)
+	.addBooleanOption((option) =>
+		option
+			.setName("review_button")
+			.setDescription("Show review button")
 			.setRequired(false)
 	)
 	.addBooleanOption((option) =>
-		option.setName('force_anonymous').setDescription('Force all reviews to be anonymous').setRequired(false)
+		option
+			.setName("useful_button")
+			.setDescription("Show useful button on reviews")
+			.setRequired(false)
+	)
+	.addRoleOption((option) =>
+		option
+			.setName("admin_role")
+			.setDescription("Role that can manage reviews")
+			.setRequired(false)
+	)
+	.addBooleanOption((option) =>
+		option
+			.setName("create_threads")
+			.setDescription("Create discussion threads for reviews")
+			.setRequired(false)
 	)
 	.addStringOption((option) =>
-		option.setName('embed_color').setDescription('Custom color for embeds (hex code)').setRequired(false)
+		option
+			.setName("review_title")
+			.setDescription(
+				'Custom title for reviews (e.g., "New Review", "Feedback")'
+			)
+			.setRequired(false)
+	)
+	.addBooleanOption((option) =>
+		option
+			.setName("force_anonymous")
+			.setDescription("Force all reviews to be anonymous")
+			.setRequired(false)
 	)
 	.addStringOption((option) =>
-		option.setName('footer_text').setDescription('Custom footer text for embeds').setRequired(false)
+		option
+			.setName("embed_color")
+			.setDescription("Custom color for embeds (hex code)")
+			.setRequired(false)
+	)
+	.addStringOption((option) =>
+		option
+			.setName("footer_text")
+			.setDescription("Custom footer text for embeds")
+			.setRequired(false)
 	);
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-	const currentGuild = interaction.guild;
-	if (!currentGuild) {
-		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
-	}
+	const guild = interaction.guild;
 
-	const existingGuild = await guildModel.findOne({ guildId: currentGuild.id });
-	if (existingGuild) {
-		const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-			new ButtonBuilder().setLabel('Dashboard').setURL('https://trustify.gg/dashboard').setStyle(ButtonStyle.Link)
-		);
-
+	if (!guild) {
 		return interaction.reply({
-			content: 'This server is already set up! visit our dashboard to configure settings.',
-			components: [row],
-			flags: ['Ephemeral'],
+			content: ERRORS.GUILD_ONLY,
+			flags: ["Ephemeral"],
 		});
 	}
 
-	let guild = await guildModel.findOne({ guildId: currentGuild.id });
+	let guildData = await guildModel.findOne({ guildId: guild.id });
 
-	// Get all options
-	const reviewTitle = interaction.options.getString('review_title');
-	const reviewChannel = interaction.options.getChannel('review_channel', true);
-	const logsChannel = interaction.options.getChannel('logs_channel', true);
-	const forceAnonymous = interaction.options.getBoolean('force_anonymous', false);
-	const createThreads = interaction.options.getBoolean('create_threads', false);
-	const reviewButton = interaction.options.getBoolean('review_button', true);
-	const usefulButton = interaction.options.getBoolean('useful_button', true);
-	const embedColor = interaction.options.getString('embed_color');
-	const footerText = interaction.options.getString('footer_text');
-	const blacklistRole = interaction.options.getRole('blacklist_role');
+	if (!guildData) {
+		guildData = new guildModel({
+			guildId: guild.id,
+			name: guild.name,
+			iconURL: guild.iconURL(),
+		});
+
+		await guildData.save();
+	}
+
+	if (guildData.channel && guildData.logsChannel) {
+		const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+			new ButtonBuilder()
+				.setLabel("Go to Dashboard")
+				.setEmoji("🌐")
+				.setURL(`https://www.trustify.gg/dashboard/${guild.id}`)
+				.setStyle(ButtonStyle.Link)
+		);
+
+		return interaction.reply({
+			content:
+				"This server is already set up! Visit our dashboard to configure settings.",
+			components: [row],
+			flags: ["Ephemeral"],
+		});
+	}
+
+	const reviewTitle = interaction.options.getString("review_title");
+	const reviewChannel = interaction.options.getChannel("review_channel", true);
+	const logsChannel = interaction.options.getChannel("logs_channel", true);
+	const forceAnonymous = interaction.options.getBoolean(
+		"force_anonymous",
+		false
+	);
+	const createThreads = interaction.options.getBoolean("create_threads", false);
+	const reviewButton = interaction.options.getBoolean("review_button", false);
+	const usefulButton = interaction.options.getBoolean("useful_button", false);
+	const embedColor = interaction.options.getString("embed_color", false);
+	const footerText = interaction.options.getString("footer_text", false);
+	const blacklistRole = interaction.options.getRole("blacklist_role", false);
 
 	const updateData: any = {
-		guildId: currentGuild.id,
-		name: currentGuild.name,
-		iconURL: currentGuild.iconURL(),
+		guildId: guild.id,
+		name: guild.name,
+		iconURL: guild.iconURL(),
 		channel: reviewChannel.id,
 		logsChannel: logsChannel.id,
 		reviewButton: reviewButton,
 		usefulButton: usefulButton,
 		customEmbed: {
-			color: embedColor || '#5865F2',
+			color: embedColor || "#5865F2",
 			footer: {
 				text: footerText || DEFAULT_FOOTER,
 			},
@@ -99,88 +157,115 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 	// Update data if options are provided
 	if (reviewTitle) updateData.reviewTitle = reviewTitle;
-	if (forceAnonymous !== null) updateData.forceAnonymousReviews = forceAnonymous;
+	if (forceAnonymous !== null)
+		updateData.forceAnonymousReviews = forceAnonymous;
 	if (createThreads !== null) updateData.createThreads = createThreads;
 	if (blacklistRole) {
-		const currentBlacklist = guild?.blacklistedRoles || [];
+		const currentBlacklist = guildData?.blacklistedRoles || [];
 		if (!currentBlacklist.includes(blacklistRole.id)) {
 			updateData.blacklistedRoles = [...currentBlacklist, blacklistRole.id];
 		}
 	}
 
-	guild = await guildModel.findOneAndUpdate({ guildId: currentGuild.id }, updateData, { upsert: true, new: true });
+	guildData = await guildModel.findOneAndUpdate(
+		{ guildId: guild.id },
+		updateData,
+		{ upsert: true, new: true }
+	);
 
 	// Verify log channel is text based
-	if (!('isTextBased' in logsChannel) || !logsChannel.isTextBased()) {
+	if (!("isTextBased" in logsChannel) || !logsChannel.isTextBased()) {
 		return interaction.reply({
 			content: ERRORS.LOGS_TEXT_ONLY,
-			flags: ['Ephemeral'],
+			flags: ["Ephemeral"],
 		});
 	}
 
-	if (!guild) {
+	if (!guildData) {
 		return interaction.reply({
 			content: ERRORS.SETUP_FAILED,
-			flags: ['Ephemeral'],
+			flags: ["Ephemeral"],
 		});
 	}
 
 	const embed = new EmbedBuilder()
-		.setColor(embedColor ? parseInt(embedColor.replace('#', ''), 16) : DEFAULT_EMBED_COLOR)
-		.setTitle('Server Review Settings Updated')
+		.setColor(
+			embedColor
+				? parseInt(embedColor.replace("#", ""), 16)
+				: DEFAULT_EMBED_COLOR
+		)
+		.setTitle("Server Review Settings Updated")
 		.addFields(
 			{
-				name: 'General Settings',
+				name: "General Settings",
 				value: [
-					`Review Title: ${guild.reviewTitle}`,
-					`Review Channel: ${guild.channel ? `<#${guild.channel}>` : 'Not set'}`,
-					`Logs Channel: ${guild.logsChannel ? `<#${guild.logsChannel}>` : 'Not set'}`,
-				].join('\n'),
+					`Review Title: ${guildData.reviewTitle}`,
+					`Review Channel: ${
+						guildData.channel ? `<#${guildData.channel}>` : "Not set"
+					}`,
+					`Logs Channel: ${
+						guildData.logsChannel ? `<#${guildData.logsChannel}>` : "Not set"
+					}`,
+				].join("\n"),
 				inline: false,
 			},
 			{
-				name: 'Features',
+				name: "Features",
 				value: [
-					`Force Anonymous: ${guild.forceAnonymousReviews ? '✅' : '❌'}`,
-					`Create Threads: ${guild.createThreads ? '✅' : '❌'}`,
-					`Review Button: ${guild.reviewButton ? '✅' : '❌'}`,
-					`Useful Button: ${guild.usefulButton ? '✅' : '❌'}`,
-				].join('\n'),
+					`Force Anonymous: ${guildData.forceAnonymousReviews ? "✅" : "❌"}`,
+					`Create Threads: ${guildData.createThreads ? "✅" : "❌"}`,
+					`Review Button: ${guildData.reviewButton ? "✅" : "❌"}`,
+					`Useful Button: ${guildData.usefulButton ? "✅" : "❌"}`,
+				].join("\n"),
 				inline: true,
 			},
 			{
-				name: 'Roles',
+				name: "Roles",
 				value: [
-					`Review Roles: ${guild.reviewRoles.length ? guild.reviewRoles.map((id) => `<@&${id}>`).join(', ') : 'None'}`,
-					`Blacklisted Roles: ${guild.blacklistedRoles.length ? guild.blacklistedRoles.map((id) => `<@&${id}>`).join(', ') : 'None'}`,
-				].join('\n'),
+					`Review Roles: ${
+						guildData.reviewRoles.length
+							? guildData.reviewRoles.map((id) => `<@&${id}>`).join(", ")
+							: "None"
+					}`,
+					`Blacklisted Roles: ${
+						guildData.blacklistedRoles.length
+							? guildData.blacklistedRoles.map((id) => `<@&${id}>`).join(", ")
+							: "None"
+					}`,
+				].join("\n"),
 				inline: true,
 			}
 		)
 		.setFooter({
-			text: guild.customEmbed?.footer?.text || DEFAULT_FOOTER,
-			iconURL: currentGuild.iconURL() ?? undefined,
+			text: guildData.customEmbed?.footer?.text || DEFAULT_FOOTER,
+			iconURL: guild.iconURL() ?? undefined,
 		});
 
 	// Log setup changes
-	if (guild.logsChannel) {
+	if (guildData.logsChannel) {
 		await logReview(
-			currentGuild.id,
+			guild.id,
 			`⚙️ **Server Settings Updated**
       Updated by: ${interaction.user.tag} (${interaction.user.id})
       Changes:
       ${Object.keys(updateData)
-				.filter((key) => key !== 'guildId' && key !== 'name' && key !== 'iconURL')
+				.filter(
+					(key) => key !== "guildId" && key !== "name" && key !== "iconURL"
+				)
 				.map((key) => `- ${key}: ${updateData[key]}`)
-				.join('\n')}`
+				.join("\n")}`
 		);
 	}
 
-	if (guild.channel) {
-		const channel = await currentGuild.channels.fetch(guild.channel);
+	if (guildData.channel) {
+		const channel = await guild.channels.fetch(guildData.channel);
 		if (channel?.isTextBased()) {
 			const welcomeEmbed = new EmbedBuilder()
-				.setColor(embedColor ? parseInt(embedColor.replace('#', ''), 16) : DEFAULT_EMBED_COLOR)
+				.setColor(
+					embedColor
+						? parseInt(embedColor.replace("#", ""), 16)
+						: DEFAULT_EMBED_COLOR
+				)
 				.setDescription(
 					"To submit a Review, click the 'Submit Review' button below.\n\nProvide a rating (1-5) and share your experience with the server."
 				)
@@ -191,7 +276,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 				.setThumbnail(interaction.client.user?.displayAvatarURL() ?? undefined);
 
 			const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-				new ButtonBuilder().setCustomId('submit_review').setLabel('Submit Review').setStyle(ButtonStyle.Primary)
+				new ButtonBuilder()
+					.setCustomId("submit_review")
+					.setLabel("Submit Review")
+					.setStyle(ButtonStyle.Primary)
 			);
 
 			await channel.send({
@@ -201,5 +289,5 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		}
 	}
 
-	return interaction.reply({ embeds: [embed], flags: ['Ephemeral'] });
+	return interaction.reply({ embeds: [embed], flags: ["Ephemeral"] });
 }

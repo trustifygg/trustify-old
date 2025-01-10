@@ -16,20 +16,22 @@ export const data = new SlashCommandBuilder()
 	.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-	const currentGuild = interaction.guild;
-	if (!currentGuild) {
+	const guild = interaction.guild;
+
+	if (!guild) {
 		return interaction.reply({ content: ERRORS.GUILD_ONLY, flags: ['Ephemeral'] });
 	}
 
-	const guild = await guildModel.findOne({ guildId: currentGuild.id });
-	if (!guild) {
+	const guildData = await guildModel.findOne({ guildId: guild.id });
+
+	if (!guildData) {
 		return interaction.reply({ content: ERRORS.NEEDS_SETUP, flags: ['Ephemeral'] });
 	}
 
-	const member = await currentGuild.members.fetch(interaction.user.id);
+	const member = await guild.members.fetch(interaction.user.id);
 	const hasPermission =
 		member.permissions.has(PermissionFlagsBits.Administrator) ||
-		guild.adminRoles.some((roleId) => member.roles.cache.has(roleId));
+		guildData.adminRoles.some((roleId) => member.roles.cache.has(roleId));
 
 	if (!hasPermission) {
 		return interaction.reply({

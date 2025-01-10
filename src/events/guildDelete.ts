@@ -6,7 +6,7 @@ import {
 	type Guild,
 } from "discord.js";
 import type { ExtendedClient } from "../main";
-import { getDynamicTime } from "../utils/getDynamicTime";
+import { getDynamicTime } from "../utils/utils";
 import { guildModel } from "../models/guild";
 import { Logger } from "../utils/logger";
 

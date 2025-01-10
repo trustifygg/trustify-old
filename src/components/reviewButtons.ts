@@ -6,46 +6,55 @@ import {
 	TextInputBuilder,
 	TextInputStyle,
 	ButtonInteraction,
-} from 'discord.js';
-import { reviewModel } from '../models/review';
-import type { IGuild } from '../models/guild';
+} from "discord.js";
+import { reviewModel } from "../models/review";
+import type { IGuild } from "../models/guild";
 
 export function createReviewModal() {
-	const modal = new ModalBuilder().setCustomId('review_modal').setTitle('Submit a Review');
-
-	const reviewInput = new TextInputBuilder()
-		.setCustomId('review_content')
-		.setLabel('Your Review')
-		.setStyle(TextInputStyle.Paragraph)
-		.setMinLength(10)
-		.setMaxLength(1000)
-		.setPlaceholder('Share your experience...')
-		.setRequired(true);
+	const modal = new ModalBuilder()
+		.setCustomId("review_modal")
+		.setTitle("Submit a Review");
 
 	const ratingInput = new TextInputBuilder()
-		.setCustomId('review_rating')
-		.setLabel('Rating (1-5)')
+		.setCustomId("review_rating")
+		.setLabel("Rating (1-5)")
 		.setStyle(TextInputStyle.Short)
 		.setMinLength(1)
 		.setMaxLength(1)
-		.setPlaceholder('Enter a number between 1 and 5')
+		.setPlaceholder("Enter a number between 1 and 5")
+		.setRequired(true);
+		
+	const reviewInput = new TextInputBuilder()
+		.setCustomId("review_content")
+		.setLabel("Your Review")
+		.setStyle(TextInputStyle.Paragraph)
+		.setMinLength(10)
+		.setMaxLength(1000)
+		.setPlaceholder("Share your experience...")
 		.setRequired(true);
 
-	const firstRow = new ActionRowBuilder<TextInputBuilder>().addComponents(reviewInput);
-	const secondRow = new ActionRowBuilder<TextInputBuilder>().addComponents(ratingInput);
+	const firstRow = new ActionRowBuilder<TextInputBuilder>().addComponents(
+		ratingInput
+	);
+	const secondRow = new ActionRowBuilder<TextInputBuilder>().addComponents(
+		reviewInput
+	);
 
 	modal.addComponents(firstRow, secondRow);
 	return modal;
 }
 
-export async function handleUsefulButton(interaction: ButtonInteraction, guild: IGuild) {
-	const reviewId = interaction.customId.split('_')[1];
+export async function handleUsefulButton(
+	interaction: ButtonInteraction,
+	guild: IGuild
+) {
+	const reviewId = interaction.customId.split("_")[1];
 	const review = await reviewModel.findOne({ reviewId });
 
 	if (!review) {
 		return interaction.reply({
-			content: 'Review not found.',
-			flags: ['Ephemeral'],
+			content: "Review not found.",
+			flags: ["Ephemeral"],
 		});
 	}
 
@@ -66,7 +75,10 @@ export async function handleUsefulButton(interaction: ButtonInteraction, guild: 
 
 	if (guild.reviewButton) {
 		row.addComponents(
-			new ButtonBuilder().setCustomId('submit_review').setLabel('Submit Review').setStyle(ButtonStyle.Primary)
+			new ButtonBuilder()
+				.setCustomId("submit_review")
+				.setLabel("Submit Review")
+				.setStyle(ButtonStyle.Primary)
 		);
 	}
 
@@ -75,7 +87,7 @@ export async function handleUsefulButton(interaction: ButtonInteraction, guild: 
 			new ButtonBuilder()
 				.setCustomId(`useful_${reviewId}`)
 				.setLabel(`Useful (${review.useful!.count})`)
-				.setEmoji('👍')
+				.setEmoji("👍")
 				.setStyle(ButtonStyle.Secondary)
 		);
 	}

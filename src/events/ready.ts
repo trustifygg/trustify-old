@@ -15,6 +15,7 @@ export const event = {
 
 		let currentStatus = 0;
 		const totalReviews = await reviewModel.countDocuments();
+		const guilds = client.guilds.cache.size.toLocaleString();
 
 		const statuses = [
 			{
@@ -28,8 +29,8 @@ export const event = {
 			},
 			{
 				type: ActivityType.Custom,
-				name: `🚀 ${client.guilds.cache.size.toLocaleString()} servers`,
-				state: `🚀 ${client.guilds.cache.size.toLocaleString()} servers`,
+				name: `🚀 ${guilds} servers`,
+				state: `🚀 ${guilds} servers`,
 			},
 		];
 
@@ -42,10 +43,12 @@ export const event = {
 			currentStatus = (currentStatus + 1) % statuses.length;
 			const status = statuses[currentStatus];
 
-			if (currentStatus === 1) {
-				const updatedReviews = await reviewModel.countDocuments();
-				status.name = `${updatedReviews.toLocaleString()} reviews`;
-			}
+			const updatedReviews = await reviewModel.countDocuments();
+			const updatedGuilds = client.guilds.cache.size.toLocaleString();
+
+			statuses[1].name = `${updatedReviews.toLocaleString()} reviews`;
+			statuses[2].name = `🚀 ${updatedGuilds} servers`;
+			statuses[2].state = `🚀 ${updatedGuilds} servers`;
 
 			client.user?.setActivity(status.name, {
 				type: status.type,

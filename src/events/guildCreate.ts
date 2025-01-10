@@ -1,9 +1,17 @@
-import { Events, EmbedBuilder, Guild, WebhookClient } from "discord.js";
+import {
+	Events,
+	EmbedBuilder,
+	Guild,
+	WebhookClient,
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+} from "discord.js";
 import { BOT_NAME, DEFAULT_EMBED_COLOR, DEFAULT_FOOTER } from "../constants";
 import type { ColorResolvable, DateResolvable } from "discord.js";
 import type { ExtendedClient } from "../main";
 import { guildModel } from "../models/guild";
-import { getDynamicTime } from "../utils/getDynamicTime";
+import { getDynamicTime } from "../utils/utils";
 import { Logger } from "../utils/logger";
 
 export const event = {
@@ -70,32 +78,30 @@ export const event = {
 				);
 
 			if (systemChannel?.isTextBased()) {
+				const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
+					new ButtonBuilder()
+						.setLabel("Go to Dashboard")
+						.setStyle(ButtonStyle.Link)
+						.setURL(`https://www.trustify.gg/dashboard/${guild.id}`)
+						.setEmoji("🌐"),
+					new ButtonBuilder()
+						.setLabel("Support Server")
+						.setStyle(ButtonStyle.Link)
+						.setURL("https://discord.gg/APa6ur9yqj")
+						.setEmoji("🏠")
+				);
 				const embed = new EmbedBuilder()
 					.setColor(DEFAULT_EMBED_COLOR as ColorResolvable)
-					.setTitle("Thanks for adding Reviews.")
+					.setTitle("Thanks for choosing Trustify!")
 					.setDescription(
-						"To get started, please run the `/setup` command to configure your server."
-					)
-					.addFields(
-						{
-							name: "⚙️ First Steps",
-							value:
-								"1. Use `/setup` to configure Reviews settings\n2. Set up review channels and roles\n3. Customize Reviews appearance",
-							inline: false,
-						},
-						{
-							name: "🔑 Important",
-							value:
-								"No commands will work until the initial setup is complete.",
-							inline: false,
-						}
+						`To get started, please run the \`/setup\` command or [visit the dashboard](https://www.trustify.gg/dashboard/${guild.id}) to configure your server.\n\nTo view all the commands, use the \`/help\` command.`
 					)
 					.setFooter({
 						text: DEFAULT_FOOTER,
 						iconURL: client.user?.displayAvatarURL(),
 					});
 
-				await systemChannel.send({ embeds: [embed] });
+				await systemChannel.send({ embeds: [embed], components: [row] });
 			}
 		} catch (error) {
 			Logger.error(`Failed to send guild create webhook: ${error}`);
