@@ -49,38 +49,37 @@ export const data = new SlashCommandBuilder()
 
 // Command execution
 export async function execute(interaction: ChatInputCommandInteraction) {
+	// Defer the reply immediately
+	await interaction.deferReply({ ephemeral: true });
+	
 	const stars = interaction.options.getInteger("stars", true);
 	const reviewContent = interaction.options.getString("message", true);
 
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
-		return interaction.reply({
+		return interaction.editReply({
 			content: ERRORS.GUILD_ONLY,
-			flags: ["Ephemeral"],
 		});
 	}
 
 	const guild = await guildModel.findOne({ guildId: currentGuild.id });
 	if (!guild) {
-		return interaction.reply({
+		return interaction.editReply({
 			content: ERRORS.NEEDS_SETUP,
-			flags: ["Ephemeral"],
 		});
 	}
 
 	if (!guild.channel) {
-		return interaction.reply({
+		return interaction.editReply({
 			content: ERRORS.NO_REVIEW_CHANNEL,
-			flags: ["Ephemeral"],
 		});
 	}
 
 	const member = await currentGuild.members.fetch(interaction.user.id);
 
 	if (guild.blacklistedRoles.some((roleId) => member.roles.cache.has(roleId))) {
-		return interaction.reply({
+		return interaction.editReply({
 			content: "You are not allowed to submit reviews.",
-			flags: ["Ephemeral"],
 		});
 	}
 
@@ -88,9 +87,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		guild.reviewRoles.length > 0 &&
 		!guild.reviewRoles.some((roleId) => member.roles.cache.has(roleId))
 	) {
-		return interaction.reply({
+		return interaction.editReply({
 			content: "You need one of the required roles to submit reviews.",
-			flags: ["Ephemeral"],
 		});
 	}
 
@@ -142,9 +140,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 		const channel = await currentGuild.channels.fetch(guild.channel);
 		if (!channel?.isTextBased()) {
-			return interaction.reply({
+			return interaction.editReply({
 				content: ERRORS.INVALID_CHANNEL,
-				flags: ["Ephemeral"],
 			});
 		}
 
@@ -253,9 +250,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			Logger.error("Failed to send DM:" + error);
 		}
 
-		return interaction.reply({
+		return interaction.editReply({
 			content: `Your review has been posted in ${channel}!`,
-			flags: ["Ephemeral"],
 		});
 	} catch (error) {
 		Logger.error(error);
@@ -266,10 +262,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 				.setEmoji("🏠")
 				.setURL("https://discord.gg/APa6ur9yqj")
 		);
-		return interaction.reply({
+		return interaction.editReply({
 			content: "An error occurred while processing your review.",
 			components: [row],
-			flags: ["Ephemeral"],
 		});
 	}
 }

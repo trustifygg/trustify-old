@@ -81,6 +81,7 @@ export const event = {
 			interaction.isModalSubmit() &&
 			interaction.customId === "review_modal"
 		) {
+			await interaction.deferReply({ ephemeral: true });
 			await sendWebhookLog(interaction, "modal");
 
 			const reviewContent =
@@ -90,10 +91,9 @@ export const event = {
 			);
 
 			if (isNaN(rating) || rating < 1 || rating > 5) {
-				return interaction.reply({
+				return interaction.editReply({
 					content: "Please provide a valid rating between 1 and 5.",
 					components: [row],
-					flags: ["Ephemeral"],
 				});
 			}
 
@@ -119,7 +119,7 @@ export const event = {
 				},
 				guild: interaction.guild,
 				user: interaction.user,
-				reply: interaction.reply.bind(interaction),
+				reply: interaction.editReply.bind(interaction),
 				deferReply: interaction.deferReply.bind(interaction),
 				editReply: interaction.editReply.bind(interaction),
 				deleteReply: interaction.deleteReply.bind(interaction),
@@ -134,10 +134,9 @@ export const event = {
 				} catch (error) {
 					Logger.error(String(error));
 					if (!interaction.replied && !interaction.deferred) {
-						await interaction.reply({
+						await interaction.editReply({
 							content: "There was an error processing your review!",
 							components: [row],
-							flags: ["Ephemeral"],
 						});
 					}
 				}

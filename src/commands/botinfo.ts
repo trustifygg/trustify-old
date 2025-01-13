@@ -9,13 +9,9 @@ import {
 } from 'discord.js';
 import { reviewModel } from '../models/review';
 import { DEFAULT_EMBED_COLOR, BOT_NAME, BOT_VERSION, DEVELOPERS } from '../constants';
+import { formatNumber } from '../utils/utils';
 
 export const data = new SlashCommandBuilder().setName('botinfo').setDescription('View bot information and statistics');
-
-// Helper function for number formatting
-function formatNumber(num: number): string {
-	return new Intl.NumberFormat('en-US').format(num);
-}
 
 export async function execute(interaction: ChatInputCommandInteraction) {
 	await interaction.deferReply();
