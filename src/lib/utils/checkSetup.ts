@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from 'discord.js';
-import { guildModel } from '../models/guild';
+import { guildModel } from '../../models/guild';
 
 export async function requireSetup(interaction: ChatInputCommandInteraction): Promise<boolean> {
 	const allowedCommands = ['setup', 'help', 'botinfo'];

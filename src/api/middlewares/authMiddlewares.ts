@@ -2,10 +2,10 @@ import type { Context, Next } from 'hono';
 import { userModel } from '../../models/users';
 import { getCookie } from 'hono/cookie';
 import { decode, verify, sign } from 'hono/jwt';
-import { refreshToken } from '../../utils/discord';
+import { refreshToken } from '../../lib/utils/discord';
 import { setCookie } from 'hono/cookie';
 import { JWT_COOKIE_OPTIONS } from '../routes/auth';
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../lib/utils/logger';
 
 export const authenticate = async (c: Context, next: Next) => {
 	try {

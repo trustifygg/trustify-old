@@ -1,5 +1,5 @@
-import { ClusterManager, HeartbeatManager } from "discord-hybrid-sharding";
-import { Logger } from "./utils/logger";
+import { ClusterManager } from "discord-hybrid-sharding";
+import { Logger } from "./lib/utils/logger";
 
 const isProduction = Bun.env.NODE_ENV === "production";
 
@@ -44,10 +44,10 @@ import {
 	errorHandler,
 	notFoundHandler,
 } from "./api/middlewares/errorMiddlewares";
-import { MongoStore } from "./utils/mongoStore";
-import { connectToDatabase } from "./config/mongodb";
+import { MongoStore } from "./lib/utils/mongoStore";
+import { connectToDatabase } from "./lib/config/mongodb";
 import { config } from "dotenv";
-import { postData } from "./utils/botlist";
+import { postData } from "./lib/botlist/postData";
 
 config();
 connectToDatabase();
@@ -113,7 +113,7 @@ routeFiles.forEach((file) => {
 	Logger.info(`[API] Route loaded: ${routeName}`);
 });
 
-app.get("/", (c) => c.json("Bonjour le monde!"));
+app.get("/", (c) => c.text("💙"));
 
 app.onError(errorHandler);
 app.notFound(notFoundHandler);

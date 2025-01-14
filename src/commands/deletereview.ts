@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits }
 import { reviewModel } from '../models/review';
 import { guildModel } from '../models/guild';
 import { ERRORS } from '../constants';
-import { Logger } from '../utils/logger';
+import { Logger } from '../lib/utils/logger';
 
 export const data = new SlashCommandBuilder()
 	.setName('deletereview')

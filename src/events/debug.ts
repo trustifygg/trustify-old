@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
 import { execute } from '../commands/botinfo';
-import { Logger } from '../utils/logger';
+import { Logger } from '../lib/utils/logger';
 
 export const event = {
 	name: Events.Debug,

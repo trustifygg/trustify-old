@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
-import { Logger } from '../../utils/logger';
-import { sendError } from '../../utils/sendError';
+import { Logger } from '../../lib/utils/logger';
+import { sendError } from '../../lib/utils/sendError';
 
 export const errorHandler = (err: Error, c: Context) => {
 	Logger.error(err);

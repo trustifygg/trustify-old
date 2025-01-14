@@ -6,7 +6,7 @@ import {
 	ChatInputCommandInteraction,
 } from 'discord.js';
 import { Logger } from './logger';
-import { DEFAULT_EMBED_COLOR } from '../constants';
+import { DEFAULT_EMBED_COLOR } from '../../constants';
 
 const webhookClient = new WebhookClient({
 	url: Bun.env.COMMANDS_WEBHOOK_URL!,

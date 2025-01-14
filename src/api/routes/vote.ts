@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { Webhook } from '@top-gg/sdk';
-import DiscordClient from '../../utils/client';
+import DiscordClient from '../../lib/utils/client';
 import type { TopGGWebhook } from '../../types';
 
 const voteRoute = new Hono();

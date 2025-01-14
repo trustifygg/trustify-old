@@ -4,7 +4,7 @@ import {
 	STAR_GREEN,
 	STAR_RED,
 	STAR_YELLOW,
-} from "../constants";
+} from "../../constants";
 
 export const getSeconds = (date: string | number | Date) =>
 	Math.round(new Date(date).valueOf() / 1000);

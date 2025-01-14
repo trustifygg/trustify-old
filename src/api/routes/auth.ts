@@ -2,11 +2,11 @@ import { authenticate } from '../middlewares/authMiddlewares';
 import { Hono } from 'hono';
 import { sign } from 'hono/jwt';
 import { deleteCookie, setCookie } from 'hono/cookie';
-import { exchangeCode, getUserData } from '../../utils/discord';
+import { exchangeCode, getUserData } from '../../lib/utils/discord';
 import { type IUser, userModel } from '../../models/users';
 import type { Variables } from '../..';
 import type { CookieOptions } from 'hono/utils/cookie';
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../lib/utils/logger';
 
 const authRoute = new Hono<{ Variables: Variables }>();
 

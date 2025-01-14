@@ -11,8 +11,8 @@ import { BOT_NAME, DEFAULT_EMBED_COLOR, DEFAULT_FOOTER } from "../constants";
 import type { ColorResolvable, DateResolvable } from "discord.js";
 import type { ExtendedClient } from "../main";
 import { guildModel } from "../models/guild";
-import { getDynamicTime } from "../utils/utils";
-import { Logger } from "../utils/logger";
+import { getDynamicTime } from "../lib/utils/utils";
+import { Logger } from "../lib/utils/logger";
 
 export const event = {
 	name: Events.GuildCreate,

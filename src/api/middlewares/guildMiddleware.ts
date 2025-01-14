@@ -1,5 +1,5 @@
 import type { Context, Next } from 'hono';
-import DiscordClient from '../../utils/client';
+import DiscordClient from '../../lib/utils/client';
 
 const client = DiscordClient.getInstance();
 

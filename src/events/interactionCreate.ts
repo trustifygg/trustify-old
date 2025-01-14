@@ -10,10 +10,10 @@ import {
 	createReviewModal,
 	handleUsefulButton,
 } from "../components/reviewButtons";
-import { requireSetup } from "../utils/checkSetup";
+import { requireSetup } from "../lib/utils/checkSetup";
 import type { ExtendedClient } from "../main";
-import { Logger } from "../utils/logger";
-import { sendWebhookLog } from "../utils/webhook";
+import { Logger } from "../lib/utils/logger";
+import { sendWebhookLog } from "../lib/utils/webhook";
 import { guildModel, type IGuild } from "../models/guild";
 
 export const event = {

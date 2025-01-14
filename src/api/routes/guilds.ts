@@ -2,9 +2,9 @@ import { Hono } from 'hono';
 import { authenticate } from '../middlewares/authMiddlewares';
 import { guildModel } from '../../models/guild';
 import { hasPermission } from '../middlewares/guildMiddleware';
-import DiscordClient from '../../utils/client';
+import DiscordClient from '../../lib/utils/client';
 import { ActionRowBuilder, ButtonBuilder, ChannelType, EmbedBuilder } from 'discord.js';
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../lib/utils/logger';
 
 const guildsRoute = new Hono();
 

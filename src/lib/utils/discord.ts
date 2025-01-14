@@ -1,4 +1,4 @@
-import type { DiscordGuild, DiscordTokens, DiscordUser } from '../types/discord';
+import type { DiscordGuild, DiscordTokens, DiscordUser } from '../../types/discord';
 import { Logger } from './logger';
 
 const DISCORD_API_URL = 'https://discord.com/api';

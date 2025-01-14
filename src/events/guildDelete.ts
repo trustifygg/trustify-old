@@ -6,9 +6,9 @@ import {
 	type Guild,
 } from "discord.js";
 import type { ExtendedClient } from "../main";
-import { getDynamicTime } from "../utils/utils";
+import { getDynamicTime } from "../lib/utils/utils";
 import { guildModel } from "../models/guild";
-import { Logger } from "../utils/logger";
+import { Logger } from "../lib/utils/logger";
 
 export const event = {
 	name: Events.GuildDelete,

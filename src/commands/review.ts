@@ -19,8 +19,8 @@ import {
 	ERRORS,
 } from "../constants";
 import { logReview } from "../events/reviewLog";
-import { Logger } from "../utils/logger";
-import { generateReviewId, getStarsDisplay } from "../utils/utils";
+import { Logger } from "../lib/utils/logger";
+import { generateReviewId, getStarsDisplay } from "../lib/utils/utils";
 
 export const data = new SlashCommandBuilder()
 	.setName("review")

@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { reviewModel } from '../../models/review';
-import DiscordClient from '../../utils/client';
-import { Logger } from '../../utils/logger';
+import DiscordClient from '../../lib/utils/client';
+import { Logger } from '../../lib/utils/logger';
 import { manager } from '../..';
 
 const statsRoute = new Hono();

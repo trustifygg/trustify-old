@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { authenticate } from '../middlewares/authMiddlewares';
-import DiscordClient from '../../utils/client';
+import DiscordClient from '../../lib/utils/client';
 import { reviewModel } from '../../models/review';
 
 import type { Variables } from '../..';

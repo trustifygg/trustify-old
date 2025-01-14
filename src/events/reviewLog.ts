@@ -1,7 +1,7 @@
 import { EmbedBuilder, TextChannel, Client, type ColorResolvable } from 'discord.js';
 import { guildModel } from '../models/guild';
 import { DEFAULT_EMBED_COLOR } from '../constants';
-import { Logger } from '../utils/logger';
+import { Logger } from '../lib/utils/logger';
 
 let client: Client;
 

@@ -1,5 +1,5 @@
 import { Client, Events, REST, Routes, ActivityType } from 'discord.js';
-import { Logger } from '../utils/logger';
+import { Logger } from '../lib/utils/logger';
 import { reviewModel } from '../models/review';
 import fs from 'fs';
 import path from 'path';

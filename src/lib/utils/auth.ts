@@ -1,9 +1,9 @@
 import { sign } from 'hono/jwt';
 import { Context } from 'hono';
 import { setCookie } from 'hono/cookie';
-import { JWT_COOKIE_OPTIONS } from '../api/routes/auth';
+import { JWT_COOKIE_OPTIONS } from '../../api/routes/auth';
 import { refreshToken } from './discord';
-import { type IUser, userModel } from '../models/users';
+import { type IUser, userModel } from '../../models/users';
 import { Logger } from './logger';
 
 export async function refreshUserTokens(user: IUser, c: Context) {
