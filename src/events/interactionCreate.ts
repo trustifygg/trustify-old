@@ -24,7 +24,7 @@ export const event = {
 			guildId: interaction.guildId,
 		})) as IGuild;
 
-		const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+		const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
 			new ButtonBuilder()
 				.setStyle(ButtonStyle.Link)
 				.setLabel("Support Server")
@@ -48,7 +48,7 @@ export const event = {
 				if (!interaction.replied && !interaction.deferred) {
 					await interaction.reply({
 						content: "There was an error executing this command!",
-						components: [row],
+						components: row.components.length ? [row] : undefined,
 						flags: ["Ephemeral"],
 					});
 				}
@@ -81,8 +81,38 @@ export const event = {
 			interaction.isModalSubmit() &&
 			interaction.customId === "review_modal"
 		) {
-			await interaction.deferReply({ ephemeral: true });
+			await interaction.deferReply({ flags: ["Ephemeral"] });
 			await sendWebhookLog(interaction, "modal");
+
+			// Add permission check for review channel
+			const guild = await guildModel.findOne({ guildId: interaction.guildId });
+			if (guild?.channel) {
+				const channel = await interaction.guild?.channels.fetch(guild.channel);
+				if (channel?.isTextBased()) {
+					const botUser = interaction.guild!.members.me!;
+					const botPermissions = channel.permissionsFor(botUser);
+					if (
+						!botPermissions?.has(["SendMessages", "ViewChannel", "EmbedLinks"])
+					) {
+						return interaction.editReply({
+							content:
+								"I don't have the required permissions in the review channel. I need: `Send Messages`, `View Channel`, and `Embed Links` permissions.",
+							components: [row],
+						});
+					}
+
+					if (
+						guild.createThreads &&
+						!botPermissions.has("CreatePublicThreads")
+					) {
+						return interaction.editReply({
+							content:
+								"Thread creation is enabled but I don't have the `Create Public Threads` permission in the review channel.",
+							components: row.components.length ? [row] : undefined,
+						});
+					}
+				}
+			}
 
 			const reviewContent =
 				interaction.fields.getTextInputValue("review_content");
@@ -93,7 +123,7 @@ export const event = {
 			if (isNaN(rating) || rating < 1 || rating > 5) {
 				return interaction.editReply({
 					content: "Please provide a valid rating between 1 and 5.",
-					components: [row],
+					components: row.components.length ? [row] : undefined,
 				});
 			}
 
@@ -119,8 +149,10 @@ export const event = {
 				},
 				guild: interaction.guild,
 				user: interaction.user,
+				deferred: true,
+				replied: false,
 				reply: interaction.editReply.bind(interaction),
-				deferReply: interaction.deferReply.bind(interaction),
+				deferReply: () => Promise.resolve(),
 				editReply: interaction.editReply.bind(interaction),
 				deleteReply: interaction.deleteReply.bind(interaction),
 				followUp: interaction.followUp.bind(interaction),
@@ -136,7 +168,7 @@ export const event = {
 					if (!interaction.replied && !interaction.deferred) {
 						await interaction.editReply({
 							content: "There was an error processing your review!",
-							components: [row],
+							components: row.components.length ? [row] : undefined,
 						});
 					}
 				}

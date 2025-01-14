@@ -49,9 +49,8 @@ export const data = new SlashCommandBuilder()
 
 // Command execution
 export async function execute(interaction: ChatInputCommandInteraction) {
-	// Defer the reply immediately
-	await interaction.deferReply({ ephemeral: true });
-	
+	await interaction.deferReply({ flags: ["Ephemeral"] });
+
 	const stars = interaction.options.getInteger("stars", true);
 	const reviewContent = interaction.options.getString("message", true);
 
@@ -74,6 +73,14 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			content: ERRORS.NO_REVIEW_CHANNEL,
 		});
 	}
+
+	const supportRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+		new ButtonBuilder()
+			.setStyle(ButtonStyle.Link)
+			.setLabel("Support Server")
+			.setEmoji("🏠")
+			.setURL("https://discord.gg/APa6ur9yqj")
+	);
 
 	const member = await currentGuild.members.fetch(interaction.user.id);
 
@@ -145,6 +152,22 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			});
 		}
 
+		const botUser = interaction.guild!.members.me!;
+		const botPermissions = channel.permissionsFor(botUser);
+		if (!botPermissions?.has(["SendMessages", "ViewChannel", "EmbedLinks"])) {
+			return interaction.editReply({
+				content: "I don't have the required permissions in the review channel. I need: `Send Messages`, `View Channel`, and `Embed Links` permissions.",
+				components: [supportRow],
+			});
+		}
+
+		if (guild.createThreads && !botPermissions.has("CreatePublicThreads")) {
+			return interaction.editReply({
+				content: "Thread creation is enabled but I don't have the `Create Public Threads` permission in the review channel.",
+				components: [supportRow],
+			});
+		}
+
 		const components = [];
 		const row = new ActionRowBuilder<ButtonBuilder>();
 
@@ -167,7 +190,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			);
 		}
 
-		components.push(row);
+		if (row.components.length > 0) {
+			components.push(row);
+		}
 
 		const reviewMessage = await channel.send({
 			embeds: [embed],
@@ -255,16 +280,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		});
 	} catch (error) {
 		Logger.error(error);
-		const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-			new ButtonBuilder()
-				.setStyle(ButtonStyle.Link)
-				.setLabel("Support Server")
-				.setEmoji("🏠")
-				.setURL("https://discord.gg/APa6ur9yqj")
-		);
 		return interaction.editReply({
 			content: "An error occurred while processing your review.",
-			components: [row],
+			components: [supportRow],
 		});
 	}
 }
