@@ -7,6 +7,7 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	type ColorResolvable,
+	AttachmentBuilder,
 } from "discord.js";
 import { guildModel } from "../models/guild";
 import { reviewModel, type IReview } from "../models/review";
@@ -46,6 +47,12 @@ export const data = new SlashCommandBuilder()
 			.setRequired(true)
 			.setMinLength(10)
 			.setMaxLength(1000)
+	)
+	.addAttachmentOption((option) =>
+		option
+			.setName("image")
+			.setDescription("An image to include with your review")
+			.setRequired(false)
 	);
 
 // Command execution
@@ -54,6 +61,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 	const stars = interaction.options.getInteger("stars", true);
 	const reviewContent = interaction.options.getString("message", true);
+	const imageAttachment = interaction.options.getAttachment("image");
 
 	const currentGuild = interaction.guild;
 	if (!currentGuild) {
@@ -149,6 +157,17 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			embed.setThumbnail(currentGuild.iconURL() ?? null);
 		}
 
+		if (imageAttachment) {
+			if (imageAttachment.contentType?.startsWith("image/")) {
+				embed.setImage(imageAttachment.url);
+			} else {
+				return interaction.editReply({
+					content: "The uploaded file is not an image. Please upload a valid image file.",
+					components: [supportRow],
+				});
+			}
+		}
+
 		const channel = await currentGuild.channels.fetch(guild.channel);
 		if (!channel?.isTextBased()) {
 			return interaction.editReply({
@@ -219,6 +238,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 				users: [],
 			},
 			threadId: undefined,
+			attachment: imageAttachment?.contentType?.startsWith("image/") ? imageAttachment.url : undefined,
 		};
 
 		if (guild.createThreads && reviewMessage.id) {
