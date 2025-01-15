@@ -1,11 +1,11 @@
-import { type InferSchemaType, model, Schema } from 'mongoose';
+import { type InferSchemaType, model, Schema } from "mongoose";
 
 const userSchema = new Schema({
 	userId: { type: String, required: true, unique: true },
 	username: { type: String, required: true },
 	email: { type: String, required: true },
 	avatar: { type: String, required: true },
-	votes: { type: Number, default: 0, required: false },
+	votedAt: { type: Date, required: false },
 
 	accessToken: {
 		type: String,
@@ -19,6 +19,6 @@ const userSchema = new Schema({
 	},
 });
 
-export const userModel = model('UserDB', userSchema, 'Users');
+export const userModel = model("UserDB", userSchema, "Users");
 
 export type IUser = InferSchemaType<typeof userSchema>;

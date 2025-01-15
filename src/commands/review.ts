@@ -21,6 +21,7 @@ import {
 import { logReview } from "../events/reviewLog";
 import { Logger } from "../lib/utils/logger";
 import { generateReviewId, getStarsDisplay } from "../lib/utils/utils";
+import { convertButtonStyle } from "../lib/utils/covertButtonStyle";
 
 export const data = new SlashCommandBuilder()
 	.setName("review")
@@ -84,15 +85,17 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 	const member = await currentGuild.members.fetch(interaction.user.id);
 
-	if (guild.blacklistedRoles.some((roleId) => member.roles.cache.has(roleId))) {
+	if (
+		guild.blacklistedRoles?.some((roleId) => member.roles.cache.has(roleId))
+	) {
 		return interaction.editReply({
 			content: "You are not allowed to submit reviews.",
 		});
 	}
 
 	if (
-		guild.reviewRoles.length > 0 &&
-		!guild.reviewRoles.some((roleId) => member.roles.cache.has(roleId))
+		guild.reviewRoles!.length > 0 &&
+		!guild.reviewRoles?.some((roleId) => member.roles.cache.has(roleId))
 	) {
 		return interaction.editReply({
 			content: "You need one of the required roles to submit reviews.",
@@ -109,7 +112,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 		const embed = new EmbedBuilder()
 			.setColor(
-				(guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable
+				(guild.customReviewEmbed?.color ||
+					DEFAULT_EMBED_COLOR) as ColorResolvable
 			)
 			.setAuthor({
 				name: `Review from ${
@@ -156,14 +160,16 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		const botPermissions = channel.permissionsFor(botUser);
 		if (!botPermissions?.has(["SendMessages", "ViewChannel", "EmbedLinks"])) {
 			return interaction.editReply({
-				content: "I don't have the required permissions in the review channel. I need: `Send Messages`, `View Channel`, and `Embed Links` permissions.",
+				content:
+					"I don't have the required permissions in the review channel. I need: `Send Messages`, `View Channel`, and `Embed Links` permissions.",
 				components: [supportRow],
 			});
 		}
 
 		if (guild.createThreads && !botPermissions.has("CreatePublicThreads")) {
 			return interaction.editReply({
-				content: "Thread creation is enabled but I don't have the `Create Public Threads` permission in the review channel.",
+				content:
+					"Thread creation is enabled but I don't have the `Create Public Threads` permission in the review channel.",
 				components: [supportRow],
 			});
 		}
@@ -175,8 +181,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			row.addComponents(
 				new ButtonBuilder()
 					.setCustomId("submit_review")
-					.setLabel("Submit Review")
-					.setStyle(ButtonStyle.Primary)
+					.setLabel(guild.customReviewButton.label)
+					.setStyle(convertButtonStyle(guild.customReviewButton.color))
 			);
 		}
 
@@ -244,12 +250,11 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			if (guild.dmOptIn) {
 				const dmEmbed = new EmbedBuilder()
 					.setColor(
-						(guild.customEmbed?.color || DEFAULT_EMBED_COLOR) as ColorResolvable
+						(guild.dmNotification.color ||
+							DEFAULT_EMBED_COLOR) as ColorResolvable
 					)
-					.setTitle("Thank you for your review!")
-					.setDescription(
-						"Thank you for your review! We really appreciate your feedback."
-					)
+					.setTitle(guild.dmNotification.title)
+					.setDescription(guild.dmNotification.description)
 					.setTimestamp()
 					.setFooter({
 						text: currentGuild.name,
