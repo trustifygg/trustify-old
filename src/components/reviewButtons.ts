@@ -8,7 +8,8 @@ import {
 	ButtonInteraction,
 } from "discord.js";
 import { reviewModel } from "../models/review";
-import type { IGuild } from "../models/guild";
+import type { GuildData } from "../types";
+import { convertButtonStyle } from "../lib/utils/covertButtonStyle";
 
 export function createReviewModal() {
 	const modal = new ModalBuilder()
@@ -23,7 +24,7 @@ export function createReviewModal() {
 		.setMaxLength(1)
 		.setPlaceholder("Enter a number between 1 and 5")
 		.setRequired(true);
-		
+
 	const reviewInput = new TextInputBuilder()
 		.setCustomId("review_content")
 		.setLabel("Your Review")
@@ -46,7 +47,7 @@ export function createReviewModal() {
 
 export async function handleUsefulButton(
 	interaction: ButtonInteraction,
-	guild: IGuild
+	guild: GuildData
 ) {
 	const reviewId = interaction.customId.split("_")[1];
 	const review = await reviewModel.findOne({ reviewId });
@@ -77,8 +78,8 @@ export async function handleUsefulButton(
 		row.addComponents(
 			new ButtonBuilder()
 				.setCustomId("submit_review")
-				.setLabel("Submit Review")
-				.setStyle(ButtonStyle.Primary)
+				.setLabel(guild.customReviewButton.label)
+				.setStyle(convertButtonStyle(guild.customReviewButton.color))
 		);
 	}
 
