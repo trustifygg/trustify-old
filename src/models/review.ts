@@ -35,7 +35,10 @@ const reviewSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
-	attachment: { type: String },
+	attachment: { 
+		type: String,
+		required: false 
+	},
 	useful: {
 		count: { type: Number, default: 0, required: true },
 		users: { type: [String], default: [], required: true },
@@ -64,5 +67,5 @@ export interface IReview extends mongoose.Document {
 	useful: { count: number; users: string[] };
 	createdAt: Date;
 	editedAt: Date | null;
-	attachment: string;
+	attachment?: string;
 }
