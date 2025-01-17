@@ -72,11 +72,16 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
 		new ButtonBuilder().setLabel('Invite Me').setURL('https://www.trustify.gg/invite').setStyle(ButtonStyle.Link),
-		new ButtonBuilder().setLabel('Support Server').setURL('https://www.trustify.gg/support').setStyle(ButtonStyle.Link)
+		new ButtonBuilder().setLabel('Support Server').setURL('https://www.trustify.gg/support').setStyle(ButtonStyle.Link),
+		new ButtonBuilder().setLabel('Vote').setURL('https://www.trustify.gg/vote').setStyle(ButtonStyle.Link)
+	);
+	const row2 = new ActionRowBuilder<ButtonBuilder>().addComponents(
+		new ButtonBuilder().setLabel('Terms of Use').setURL('https://www.trustify.gg/terms').setStyle(ButtonStyle.Link),
+		new ButtonBuilder().setLabel('Privacy Policy').setURL('https://www.trustify.gg/privacy').setStyle(ButtonStyle.Link)
 	);
 
 	return interaction.reply({
 		embeds: [embed],
-		components: [row],
+		components: [row, row2],
 	});
 }

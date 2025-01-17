@@ -34,7 +34,6 @@ export interface GuildData {
 		title: string;
 		description: string;
 	};
-	dmOptIn: boolean;
 }
 
 export interface UserData {

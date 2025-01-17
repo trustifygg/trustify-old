@@ -245,7 +245,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		);
 
 		try {
-			if (guild.dmOptIn) {
+			if (guild.dmNotification.enabled) {
 				const dmEmbed = new EmbedBuilder()
 					.setColor((guild.dmNotification.color || DEFAULT_EMBED_COLOR) as ColorResolvable)
 					.setTitle(guild.dmNotification.title)

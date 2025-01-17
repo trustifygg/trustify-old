@@ -54,10 +54,6 @@ const guildSchema = new mongoose.Schema<GuildData>({
 			default: 'Thank you for your review! We really appreciate your feedback.',
 		},
 	},
-	dmOptIn: {
-		type: Boolean,
-		default: true,
-	},
 });
 
 export const guildModel = mongoose.model<GuildData>('GuildDB', guildSchema, 'Guilds');
