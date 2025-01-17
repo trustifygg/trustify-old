@@ -18,6 +18,10 @@ import {
 } from "../constants";
 import { logReview } from "../events/reviewLog";
 
+function isValidHexColor(color: string): boolean {
+	return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+}
+
 export const data = new SlashCommandBuilder()
 	.setName("setup")
 	.setDescription("Setup server review settings")
@@ -136,6 +140,14 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	const reviewButton = interaction.options.getBoolean("review_button", false);
 	const usefulButton = interaction.options.getBoolean("useful_button", false);
 	const embedColor = interaction.options.getString("embed_color", false);
+	if (embedColor) {
+		if (!isValidHexColor(embedColor)) {
+			return interaction.reply({
+				content: 'Invalid hex color! Please use a valid hex color code (e.g., #5865F2).\nYou can pick a color here: https://htmlcolorcodes.com/color-picker/',
+				ephemeral: true
+			});
+		}
+	}
 	const footerText = interaction.options.getString("footer_text", false);
 	const blacklistRole = interaction.options.getRole("blacklist_role", false);
 
