@@ -1,4 +1,4 @@
-import { IGuild } from "../models/guild";
+import { IGuild } from '../models/guild';
 
 export interface GuildData {
 	guildId: string;
@@ -18,7 +18,7 @@ export interface GuildData {
 	adminRoles?: string[];
 	customReviewButton: {
 		label: string;
-		color: "blurple" | "red" | "green" | "grey";
+		color: 'blurple' | 'red' | 'green' | 'grey';
 	};
 	customReviewEmbed: {
 		color: string;
@@ -48,7 +48,7 @@ export interface UserData {
 export type TopGGWebhook = {
 	bot: string;
 	user: string;
-	type: "upvote" | "test";
+	type: 'upvote' | 'test';
 	isWeekend: boolean;
 	query?: string;
 };

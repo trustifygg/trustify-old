@@ -1,18 +1,10 @@
-import {
-	Events,
-	EmbedBuilder,
-	Guild,
-	WebhookClient,
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-} from "discord.js";
-import { BOT_NAME, DEFAULT_EMBED_COLOR, DEFAULT_FOOTER } from "../constants";
-import type { ColorResolvable, DateResolvable } from "discord.js";
-import type { ExtendedClient } from "../main";
-import { guildModel } from "../models/guild";
-import { getDynamicTime } from "../lib/utils/utils";
-import { Logger } from "../lib/utils/logger";
+import { Events, EmbedBuilder, Guild, WebhookClient, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { BOT_NAME, DEFAULT_EMBED_COLOR, DEFAULT_FOOTER } from '../constants';
+import type { ColorResolvable, DateResolvable } from 'discord.js';
+import type { ExtendedClient } from '../main';
+import { guildModel } from '../models/guild';
+import { getDynamicTime } from '../lib/utils/utils';
+import { Logger } from '../lib/utils/logger';
 
 export const event = {
 	name: Events.GuildCreate,
@@ -45,18 +37,15 @@ export const event = {
 				owner.user.username
 			} (${owner.id})\nMembers: ${guild.memberCount}\nTotal Guilds: ${
 				client.guilds.cache.size
-			}\nJoined: ${getDynamicTime(
-				joinTime,
-				"LONG_TIME_AND_DATE"
-			)} (${getDynamicTime(joinTime, "RELATIVE")})`;
+			}\nJoined: ${getDynamicTime(joinTime, 'LONG_TIME_AND_DATE')} (${getDynamicTime(joinTime, 'RELATIVE')})`;
 
 			const embed = new EmbedBuilder()
-				.setColor("Green")
+				.setColor('Green')
 				.setAuthor({
 					name: guild.name,
 					iconURL: guild.iconURL() || undefined,
 				})
-				.setTitle("Guild Joined")
+				.setTitle('Guild Joined')
 				.setDescription(description)
 
 				.setThumbnail(guild.iconURL() ?? null)
@@ -64,7 +53,7 @@ export const event = {
 
 			await webhook.send({
 				embeds: [embed],
-				username: "Guild Create",
+				username: 'Guild Create',
 				avatarURL: client.user?.displayAvatarURL(),
 			});
 
@@ -72,27 +61,25 @@ export const event = {
 			const systemChannel =
 				guild.systemChannel ||
 				guild.channels.cache.find(
-					(channel) =>
-						channel.isTextBased() &&
-						channel.permissionsFor(guild.members.me!)?.has("SendMessages")
+					(channel) => channel.isTextBased() && channel.permissionsFor(guild.members.me!)?.has('SendMessages')
 				);
 
 			if (systemChannel?.isTextBased()) {
 				const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
 					new ButtonBuilder()
-						.setLabel("Go to Dashboard")
+						.setLabel('Go to Dashboard')
 						.setStyle(ButtonStyle.Link)
 						.setURL(`https://www.trustify.gg/dashboard/${guild.id}`)
-						.setEmoji("🌐"),
+						.setEmoji('🌐'),
 					new ButtonBuilder()
-						.setLabel("Support Server")
+						.setLabel('Support Server')
 						.setStyle(ButtonStyle.Link)
-						.setURL("https://discord.gg/APa6ur9yqj")
-						.setEmoji("🏠")
+						.setURL('https://discord.gg/APa6ur9yqj')
+						.setEmoji('🏠')
 				);
 				const embed = new EmbedBuilder()
 					.setColor(DEFAULT_EMBED_COLOR as ColorResolvable)
-					.setTitle("Thanks for choosing Trustify!")
+					.setTitle('Thanks for choosing Trustify!')
 					.setDescription(
 						`To get started, please run the \`/setup\` command or [visit the dashboard](https://www.trustify.gg/dashboard/${guild.id}) to configure your server.\n\nTo view all the commands, use the \`/help\` command.`
 					)
