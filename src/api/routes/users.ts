@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { userModel } from "../../models/users";
+import { userModel, type IUser } from "../../models/users";
 import { authenticate } from "../middlewares/authMiddlewares";
 import { getBotGuilds, getUserGuilds } from "../../lib/utils/discord";
 import { refreshUserTokens } from "../../lib/utils/auth";
@@ -28,7 +28,7 @@ usersRoute.get("/@me", authenticate, async (c) => {
 			username: userData.username,
 			email: userData.email,
 			avatar: userData.avatar,
-			votes: userData.votes,
+			votedAt: userData.votedAt,
 		};
 
 		return c.json(userRes, 200);
