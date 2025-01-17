@@ -1,47 +1,33 @@
-import {
-	MAX_STARS,
-	STAR_EMPTY,
-	STAR_GREEN,
-	STAR_RED,
-	STAR_YELLOW,
-} from "../../constants";
+import { MAX_STARS, STAR_EMPTY, STAR_GREEN, STAR_RED, STAR_YELLOW } from '../../constants';
 
-export const getSeconds = (date: string | number | Date) =>
-	Math.round(new Date(date).valueOf() / 1000);
+export const getSeconds = (date: string | number | Date) => Math.round(new Date(date).valueOf() / 1000);
 export const getDynamicTime = (
 	date: string | number | Date,
-	style:
-		| "SHORT_TIME"
-		| "LONG_TIME"
-		| "SHORT_DATE"
-		| "LONG_DATE"
-		| "TIME_AND_DATE"
-		| "LONG_TIME_AND_DATE"
-		| "RELATIVE"
+	style: 'SHORT_TIME' | 'LONG_TIME' | 'SHORT_DATE' | 'LONG_DATE' | 'TIME_AND_DATE' | 'LONG_TIME_AND_DATE' | 'RELATIVE'
 ) => {
 	let type: string | undefined = undefined;
 
 	switch (style) {
-		case "SHORT_TIME":
-			type = "t";
+		case 'SHORT_TIME':
+			type = 't';
 			break;
-		case "LONG_TIME":
-			type = "T";
+		case 'LONG_TIME':
+			type = 'T';
 			break;
-		case "SHORT_DATE":
-			type = "d";
+		case 'SHORT_DATE':
+			type = 'd';
 			break;
-		case "LONG_DATE":
-			type = "D";
+		case 'LONG_DATE':
+			type = 'D';
 			break;
-		case "TIME_AND_DATE":
-			type = "f";
+		case 'TIME_AND_DATE':
+			type = 'f';
 			break;
-		case "LONG_TIME_AND_DATE":
-			type = "F";
+		case 'LONG_TIME_AND_DATE':
+			type = 'F';
 			break;
-		case "RELATIVE":
-			type = "R";
+		case 'RELATIVE':
+			type = 'R';
 			break;
 		default:
 			break;
@@ -67,5 +53,5 @@ export const getStarsDisplay = (count: number): string => {
 };
 
 export const formatNumber = (num: number): string => {
-	return new Intl.NumberFormat("en-US").format(num);
+	return new Intl.NumberFormat('en-US').format(num);
 };

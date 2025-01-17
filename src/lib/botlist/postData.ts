@@ -1,6 +1,6 @@
-import { Time } from "@imranbarbhuiya/duration";
-import type { ClusterManager } from "discord-hybrid-sharding";
-import { postToTopGG } from "./topgg/postToTopGG";
+import { Time } from '@imranbarbhuiya/duration';
+import type { ClusterManager } from 'discord-hybrid-sharding';
+import { postToTopGG } from './topgg/postToTopGG';
 
 export const postData = (manager: ClusterManager) => {
 	setInterval(async () => {

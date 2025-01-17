@@ -1,14 +1,14 @@
-import { ButtonStyle } from "discord.js";
+import { ButtonStyle } from 'discord.js';
 
 export const convertButtonStyle = (style: string): ButtonStyle => {
 	switch (style.toLowerCase()) {
-		case "blurple":
+		case 'blurple':
 			return ButtonStyle.Primary;
-		case "grey":
+		case 'grey':
 			return ButtonStyle.Secondary;
-		case "green":
+		case 'green':
 			return ButtonStyle.Success;
-		case "red":
+		case 'red':
 			return ButtonStyle.Danger;
 		default:
 			return ButtonStyle.Primary;

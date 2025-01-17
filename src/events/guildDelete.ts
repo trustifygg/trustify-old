@@ -1,14 +1,8 @@
-import {
-	EmbedBuilder,
-	Events,
-	WebhookClient,
-	type DateResolvable,
-	type Guild,
-} from "discord.js";
-import type { ExtendedClient } from "../main";
-import { getDynamicTime } from "../lib/utils/utils";
-import { guildModel } from "../models/guild";
-import { Logger } from "../lib/utils/logger";
+import { EmbedBuilder, Events, WebhookClient, type DateResolvable, type Guild } from 'discord.js';
+import type { ExtendedClient } from '../main';
+import { getDynamicTime } from '../lib/utils/utils';
+import { guildModel } from '../models/guild';
+import { Logger } from '../lib/utils/logger';
 
 export const event = {
 	name: Events.GuildDelete,
@@ -30,21 +24,21 @@ export const event = {
 			const leaveTime = new Date();
 
 			const description = `Name: ${guild.name} (${guild.id})\nOwner: ${
-				owner.username ?? "Unknown"
-			} (${owner.id ?? "Unknown"})\nMembers: ${
+				owner.username ?? 'Unknown'
+			} (${owner.id ?? 'Unknown'})\nMembers: ${
 				guild.memberCount
 			}\nTotal Guilds: ${client.guilds.cache.size}\nLeft: ${getDynamicTime(
 				leaveTime,
-				"LONG_TIME_AND_DATE"
-			)} (${getDynamicTime(leaveTime, "RELATIVE")})`;
+				'LONG_TIME_AND_DATE'
+			)} (${getDynamicTime(leaveTime, 'RELATIVE')})`;
 
 			const embed = new EmbedBuilder()
-				.setColor("Red")
+				.setColor('Red')
 				.setAuthor({
-					name: guild.name || "Unknown Server",
+					name: guild.name || 'Unknown Server',
 					iconURL: guild.iconURL() ?? undefined,
 				})
-				.setTitle("Guild Deleted")
+				.setTitle('Guild Deleted')
 				.setDescription(description)
 
 				.setThumbnail(guild.iconURL() ?? null)
@@ -52,7 +46,7 @@ export const event = {
 
 			await webhook.send({
 				embeds: [embed],
-				username: "Guild Delete",
+				username: 'Guild Delete',
 				avatarURL: client.user?.displayAvatarURL(),
 			});
 		} catch (error) {

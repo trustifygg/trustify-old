@@ -35,9 +35,9 @@ const reviewSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
-	attachment: { 
+	attachment: {
 		type: String,
-		required: false 
+		required: false,
 	},
 	useful: {
 		count: { type: Number, default: 0, required: true },

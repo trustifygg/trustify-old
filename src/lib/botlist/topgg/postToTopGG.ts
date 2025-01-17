@@ -1,21 +1,21 @@
-import { request } from "undici";
-import { Logger } from "../../utils/logger";
+import { request } from 'undici';
+import { Logger } from '../../utils/logger';
 
 export const postToTopGG = async (body: {
 	server_count: number;
 	shard_count?: number;
 	shard_id?: number;
 }) => {
-	const url = "https://top.gg/api/bots/stats";
+	const url = 'https://top.gg/api/bots/stats';
 
 	Logger.debug(`Posting to Top.gg...`, body);
 
 	const res = await request(url, {
-		method: "POST",
+		method: 'POST',
 		body: JSON.stringify(body),
 		headers: {
 			authorization: `${Bun.env.TOPGG_TOKEN!}`,
-			"content-type": "application/json",
+			'content-type': 'application/json',
 		},
 	});
 
@@ -26,5 +26,5 @@ export const postToTopGG = async (body: {
 
 	await res.body.json();
 
-	Logger.info("Posted to top.gg");
+	Logger.info('Posted to top.gg');
 };
