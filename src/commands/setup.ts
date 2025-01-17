@@ -13,6 +13,10 @@ import { guildModel } from '../models/guild';
 import { DEFAULT_EMBED_COLOR, DEFAULT_FOOTER, ERRORS, BOT_NAME } from '../constants';
 import { logReview } from '../events/reviewLog';
 
+function isValidHexColor(color: string): boolean {
+	return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+}
+
 export const data = new SlashCommandBuilder()
 	.setName('setup')
 	.setDescription('Setup server review settings')
@@ -88,6 +92,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		});
 	}
 
+<<<<<<< HEAD
 	const reviewTitle = interaction.options.getString('review_title');
 	const reviewChannel = interaction.options.getChannel('review_channel', true);
 	const logsChannel = interaction.options.getChannel('logs_channel', true);
@@ -98,6 +103,29 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	const embedColor = interaction.options.getString('embed_color', false);
 	const footerText = interaction.options.getString('footer_text', false);
 	const blacklistRole = interaction.options.getRole('blacklist_role', false);
+=======
+	const reviewTitle = interaction.options.getString("review_title");
+	const reviewChannel = interaction.options.getChannel("review_channel", true);
+	const logsChannel = interaction.options.getChannel("logs_channel", true);
+	const forceAnonymous = interaction.options.getBoolean(
+		"force_anonymous",
+		false
+	);
+	const createThreads = interaction.options.getBoolean("create_threads", false);
+	const reviewButton = interaction.options.getBoolean("review_button", false);
+	const usefulButton = interaction.options.getBoolean("useful_button", false);
+	const embedColor = interaction.options.getString("embed_color", false);
+	if (embedColor) {
+		if (!isValidHexColor(embedColor)) {
+			return interaction.reply({
+				content: 'Invalid hex color! Please use a valid hex color code (e.g., #5865F2).\nYou can pick a color here: https://htmlcolorcodes.com/color-picker/',
+				ephemeral: true
+			});
+		}
+	}
+	const footerText = interaction.options.getString("footer_text", false);
+	const blacklistRole = interaction.options.getRole("blacklist_role", false);
+>>>>>>> 3aa782ae07a68ab137d588776b2070c04757de4f
 
 	const updateData: any = {
 		guildId: guild.id,
