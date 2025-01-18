@@ -30,12 +30,6 @@ const guildSchema = new mongoose.Schema<GuildData>({
 	reviewRoles: {
 		type: [String],
 		default: [],
-		validate: [
-			{
-				validator: (array: string[]) => array.length <= 5,
-				message: 'Cannot have more than 5 review roles',
-			},
-		],
 	},
 	blacklistedRoles: {
 		type: [String],
