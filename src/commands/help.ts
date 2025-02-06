@@ -3,7 +3,6 @@ import {
 	SlashCommandBuilder,
 	EmbedBuilder,
 	PermissionFlagsBits,
-	type ColorResolvable,
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,

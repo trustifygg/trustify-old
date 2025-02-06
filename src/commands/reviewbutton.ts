@@ -4,7 +4,6 @@ import {
 	PermissionFlagsBits,
 	ActionRowBuilder,
 	ButtonBuilder,
-	ButtonStyle,
 	TextChannel,
 } from 'discord.js';
 import { guildModel } from '../models/guild';

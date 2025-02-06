@@ -3,20 +3,15 @@ import {
 	SlashCommandBuilder,
 	EmbedBuilder,
 	PermissionFlagsBits,
-	type ColorResolvable,
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
 	ApplicationIntegrationType,
 } from "discord.js";
-import { guildModel } from "../models/guild";
 import {
 	DEFAULT_EMBED_COLOR,
 	DEFAULT_FOOTER,
-	ERRORS,
-	BOT_NAME,
 } from "../constants";
-import { logReview } from "../events/reviewLog";
 
 export const data = new SlashCommandBuilder()
 	.setName("setup")

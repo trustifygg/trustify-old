@@ -7,7 +7,6 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	type ColorResolvable,
-	AttachmentBuilder,
 } from 'discord.js';
 import { guildModel } from '../models/guild';
 import { reviewModel, type IReview } from '../models/review';

@@ -26,7 +26,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 	const member = await currentGuild.members.fetch(interaction.user.id);
 	const hasPermission =
 		member.permissions.has(PermissionFlagsBits.Administrator) ||
-		guild.adminRoles.some((roleId) => member.roles.cache.has(roleId));
+		(guild.adminRoles ?? []).some((roleId) => member.roles.cache.has(roleId));
 
 	if (!hasPermission) {
 		return interaction.reply({
