@@ -231,6 +231,17 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		const review = new reviewModel(reviewData);
 		await review.save();
 
+		if (guild.autoReviewRole) {
+			try {
+				const role = await currentGuild.roles.fetch(guild.autoReviewRole);
+				if (role && !member.roles.cache.has(guild.autoReviewRole)) {
+					await member.roles.add(guild.autoReviewRole);
+				}
+			} catch (error) {
+				Logger.error('Failed to assign auto review role:' + error);
+			}
+		}
+
 		await logReview(
 			currentGuild.id,
 			`📝 **New Review**

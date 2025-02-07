@@ -16,6 +16,7 @@ export interface GuildData {
 	reviewRoles?: string[];
 	blacklistedRoles?: string[];
 	adminRoles?: string[];
+	autoReviewRole?: string;
 	customReviewButton: {
 		label: string;
 		color: 'blurple' | 'red' | 'green' | 'grey';

@@ -39,6 +39,10 @@ const guildSchema = new mongoose.Schema<GuildData>({
 		type: [String],
 		default: [],
 	},
+	autoReviewRole: {
+		type: String,
+		default: '',
+	},
 	dmNotification: {
 		enabled: { type: Boolean, default: true },
 		color: { type: String, default: '#5865F2' },
