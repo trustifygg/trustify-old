@@ -13,7 +13,7 @@
 		"@types/bun": "latest"
 	},
 	"peerDependencies": {
-		"typescript": "^5.0.0"
+		"typescript": "^5.7.2"
 	},
 	"dependencies": {
 		"@imranbarbhuiya/duration": "^5.1.8",
@@ -21,12 +21,12 @@
 		"@top-gg/sdk": "^3.1.6",
 		"chalk": "^5.4.1",
 		"colorette": "^2.0.20",
-		"discord-hybrid-sharding": "^2.2.3",
-		"discord.js": "^14.16.3",
+		"discord-hybrid-sharding": "^2.2.4",
+		"discord.js": "^14.17.3",
 		"dotenv": "^16.4.7",
-		"hono": "^4.6.15",
+		"hono": "^4.7.0",
 		"hono-rate-limiter": "^0.4.2",
-		"hono-sessions": "^0.7.0",
-		"mongoose": "^8.9.3"
+		"hono-sessions": "^0.7.1",
+		"mongoose": "^8.10.0"
 	}
 }
