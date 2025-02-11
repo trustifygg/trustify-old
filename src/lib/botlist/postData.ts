@@ -1,8 +1,8 @@
 import { Time } from '@imranbarbhuiya/duration';
-import type { ClusterManager } from 'discord-hybrid-sharding';
 import { postToTopGG } from './topgg/postToTopGG';
+import type { ShardingManager } from 'discord.js';
 
-export const postData = (manager: ClusterManager) => {
+export const postData = (manager: ShardingManager) => {
 	setInterval(async () => {
 		const server_count = (await manager.broadcastEval((client) => client.guilds.cache.size)).reduce((prev, curr) => {
 			prev += curr;
@@ -11,7 +11,7 @@ export const postData = (manager: ClusterManager) => {
 
 		await postToTopGG({
 			server_count,
-			shard_count: manager.totalShards,
+			shard_count: 1,
 		});
 	}, Time.Hour);
 };
