@@ -18,6 +18,8 @@ export const JWT_COOKIE_OPTIONS: CookieOptions = {
 	maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
+
+
 authRoute.get('/login', (c) => {
 	if (!Bun.env.DISCORD_CLIENT_ID || !Bun.env.DISCORD_REDIRECT_URI) {
 		return c.json({ message: 'Discord OAuth configuration missing' }, 500);
