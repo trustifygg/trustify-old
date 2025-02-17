@@ -14,7 +14,7 @@ export const MAX_REVIEW_ROLES = 5;
 
 // Text constants
 export const BOT_NAME = 'Trustify';
-export const BOT_VERSION = '2.0.0';
+export const BOT_VERSION = '2.1.2';
 export const BOT_TAGLINE = 'Building trust in communities';
 export const DEFAULT_REVIEW_TITLE = 'New Review';
 export const DEVELOPERS = [
