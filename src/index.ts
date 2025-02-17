@@ -81,8 +81,8 @@ app
 	)
 	.use(
 		rateLimiter({
-			windowMs: 15 * 60 * 1000,
-			limit: 150,
+			windowMs: 60 * 1000,
+			limit: 1000,
 			keyGenerator: (c: any) => "global",
 		})
 	)
