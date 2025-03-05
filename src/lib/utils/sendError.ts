@@ -8,7 +8,7 @@ const trim = <T extends string | null | undefined>(str: T, max: number): T => {
 	return trimmedStr as T;
 };
 
-export const sendError = (client: Client, error: Error, name: string) => {
+export const sendError = (error: Error, name: string) => {
 	Logger.error(error);
 	if (Bun.env.NODE_ENV !== 'production') return;
 
@@ -37,7 +37,7 @@ export const sendError = (client: Client, error: Error, name: string) => {
 	}).setDescription(`${name} error log`);
 	void wh.send({
 		username: 'Error',
-		avatarURL: client.user?.displayAvatarURL(),
+		avatarURL: "",
 		content: `<@&1180530000374542386> ${error}`,
 		embeds: [embed],
 		files: [attachment],
