@@ -11,6 +11,7 @@ import path from "path";
 import { setClient } from "./events/reviewLog";
 import { Logger } from "./lib/utils/logger";
 import { sendError } from "./lib/utils/sendError";
+import { Agent } from "undici";
 
 config();
 connectToDatabase();
@@ -25,8 +26,19 @@ export interface ExtendedClient extends Client {
 	>;
 }
 
+const agent = new Agent({
+	connect: {
+		timeout: 10_000,
+	},
+	
+});
+
 const client = new Client({
 	intents: [GatewayIntentBits.Guilds],
+	rest: {
+		retries: 3,
+		timeout: 30_000,
+	},
 }) as ExtendedClient;
 
 client.commands = new Collection();
@@ -65,7 +77,7 @@ for (const file of eventFiles) {
 }
 
 client.on("error", (error) => {
-	sendError(client, error, "error");
+	sendError(error, "error");
 });
 
 client.rest.on("rateLimited", (data) => {
@@ -73,7 +85,7 @@ client.rest.on("rateLimited", (data) => {
 });
 
 const verifyAndSend = (error: Error, name: string) => {
-	sendError(client, error, name);
+	sendError(error, name);
 };
 
 process.on("unhandledRejection", (error: Error) => {

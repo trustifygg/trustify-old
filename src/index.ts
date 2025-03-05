@@ -124,7 +124,7 @@ app.onError(errorHandler);
 app.notFound(notFoundHandler);
 
 manager
-	.spawn({ amount: "auto", delay: 5000, timeout: 10 * 1000 })
+	.spawn({ amount: "auto", timeout: 60 * 1000 })
 	.then(() => {
 		Logger.info("All shards are running");
 
